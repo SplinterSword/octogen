@@ -17,8 +17,8 @@ model User {
     updatedAt DateTime @updatedAt
 
     imageUrl  String?
-    firstname String?
-    lastname  String?
+    firstName String?
+    lastName  String?
 
     emailAddresses String @unique
     credits Int @default(150)
