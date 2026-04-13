@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "@/components/ui/sidebar"
+import { useProjects } from "@/hooks/use-projects"
 
 const items = [
     {
@@ -31,18 +32,10 @@ const items = [
     }
 ]
 
-const projects = [
-    {
-        name: "Project 1",
-    },
-    {
-        name: "Project 2"
-    },
-]
-
 export function AppSidebar() {
     const pathname = usePathname()
     const { open } = useSidebar()
+    const { projects, projectId, setProjectId } = useProjects()
     return (
         <Sidebar collapsible="icon" variant="floating">
             <SidebarHeader>
@@ -79,13 +72,13 @@ export function AppSidebar() {
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {projects.map((project) => (
+                            {projects?.map((project: any) => (
                                 <SidebarMenuItem key={project.name}>
                                     <SidebarMenuButton asChild>
-                                        <div>
-                                            <div className={cn("rounded-sm border size-6 flex items-center justify-center text-sm bg-primary text-primary",
+                                        <div onClick={() => setProjectId(project.id)}>
+                                            <div className={cn("rounded-sm border size-6 flex items-center justify-center text-sm bg-muted text-primary",
                                                 {
-                                                    'border-primary text-white': true
+                                                    'border-primary bg-primary text-white': projectId === project.id
                                                 }
                                             )}>
                                                 {project.name[0]}
@@ -96,14 +89,16 @@ export function AppSidebar() {
                                 </SidebarMenuItem>
                             ))}
                             <div className="h-2"></div>
-                            <SidebarMenuItem>
-                                <Link href="/create">
-                                    <Button size="sm" variant="outline" className="w-fit">
-                                        <Plus />
-                                        Create Project
-                                    </Button>
-                                </Link>
-                            </SidebarMenuItem>
+                            {open && (
+                                <SidebarMenuItem>
+                                    <Link href="/create">
+                                        <Button size="sm" variant="outline" className="w-fit">
+                                            <Plus />
+                                            Create Project
+                                        </Button>
+                                    </Link>
+                                </SidebarMenuItem>
+                            )}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
