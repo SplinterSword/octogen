@@ -83,7 +83,7 @@ export function AppSidebar() {
                                 <SidebarMenuItem key={project.name}>
                                     <SidebarMenuButton asChild>
                                         <div>
-                                            <div className={cn("rounded-sm border size-6 flex items-center justify-center text-sm bg-black text-primary",
+                                            <div className={cn("rounded-sm border size-6 flex items-center justify-center text-sm bg-primary text-primary",
                                                 {
                                                     'border-primary text-white': true
                                                 }
