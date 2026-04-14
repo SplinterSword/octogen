@@ -16,7 +16,25 @@ const groq = createGroq({
 
 const encoder = getEncoding("cl100k_base");
 
-function filterFiles(diff: string): string {
+function shouldIgnoreFile(line: string, ignorePatterns: string[]): boolean {
+    const match = line.match(/^diff --git a\/(.+) b\/(.+)$/);
+    if (!match) return false;
+
+    const [, fileA, fileB] = match;
+
+    return ignorePatterns.some(pattern => {
+        // folder match
+        if (pattern.endsWith("/")) {
+            return fileA?.includes(pattern) || fileB?.includes(pattern);
+        }
+
+        // exact file match (strict)
+        const regex = new RegExp(pattern.replace(".", "\\.") + "$");
+        return regex.test(fileA!) || regex.test(fileB!);
+    });
+}
+
+function extractMeaningfulDiff(diff: string): string {
     const ignorePatterns = [
         "package-lock.json",
         "pnpm-lock.yaml",
@@ -29,22 +47,35 @@ function filterFiles(diff: string): string {
 
     const lines = diff.split("\n");
 
-    let keep = true;
-    let filtered: string[] = [];
+    const result: string[] = [];
+    let keepFile = true;
 
     for (const line of lines) {
+        // 🔹 Detect new file block
         if (line.startsWith("diff --git")) {
-            keep = !ignorePatterns.some(pattern =>
-                line.includes(pattern)
-            );
+            keepFile = !shouldIgnoreFile(line, ignorePatterns);
+
+            if (keepFile) {
+                result.push(line);
+            }
+            continue;
         }
 
-        if (keep) {
-            filtered.push(line);
+        if (!keepFile) continue;
+
+        if (
+            line.startsWith("index") ||
+            line.startsWith("---") ||
+            line.startsWith("+++") ||
+            line.startsWith("@@") ||
+            line.startsWith("+") ||
+            line.startsWith("-")
+        ) {
+            result.push(line);
         }
     }
 
-    return filtered.join("\n");
+    return result.join("\n");
 }
 
 function countTokens(text: string): number {
@@ -52,12 +83,11 @@ function countTokens(text: string): number {
 }
 
 export const aiSummariseCommit = async (diff: string) => {
-    const filteredFileDiff = filterFiles(diff);
+    const filteredDiff = extractMeaningfulDiff(diff);
 
-    const filteredDiff = filteredFileDiff
-        .split("\n")
-        .filter(line => line.startsWith("+") || line.startsWith("-"))
-        .join("\n");
+    if (!filteredDiff.trim()) {
+        return "No meaningful changes to summarize.";
+    }
 
     const tokenCount = countTokens(filteredDiff);
 
