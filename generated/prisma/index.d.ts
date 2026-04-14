@@ -28,6 +28,11 @@ export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
  * 
  */
 export type UserToProject = $Result.DefaultSelection<Prisma.$UserToProjectPayload>
+/**
+ * Model Commit
+ * 
+ */
+export type Commit = $Result.DefaultSelection<Prisma.$CommitPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -176,6 +181,16 @@ export class PrismaClient<
     * ```
     */
   get userToProject(): Prisma.UserToProjectDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.commit`: Exposes CRUD operations for the **Commit** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Commits
+    * const commits = await prisma.commit.findMany()
+    * ```
+    */
+  get commit(): Prisma.CommitDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -619,7 +634,8 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Project: 'Project',
-    UserToProject: 'UserToProject'
+    UserToProject: 'UserToProject',
+    Commit: 'Commit'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -638,7 +654,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "project" | "userToProject"
+      modelProps: "user" | "project" | "userToProject" | "commit"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -864,6 +880,80 @@ export namespace Prisma {
           }
         }
       }
+      Commit: {
+        payload: Prisma.$CommitPayload<ExtArgs>
+        fields: Prisma.CommitFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommitFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommitFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>
+          }
+          findFirst: {
+            args: Prisma.CommitFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommitFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>
+          }
+          findMany: {
+            args: Prisma.CommitFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>[]
+          }
+          create: {
+            args: Prisma.CommitCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>
+          }
+          createMany: {
+            args: Prisma.CommitCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommitCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>[]
+          }
+          delete: {
+            args: Prisma.CommitDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>
+          }
+          update: {
+            args: Prisma.CommitUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>
+          }
+          deleteMany: {
+            args: Prisma.CommitDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommitUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CommitUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>[]
+          }
+          upsert: {
+            args: Prisma.CommitUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitPayload>
+          }
+          aggregate: {
+            args: Prisma.CommitAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCommit>
+          }
+          groupBy: {
+            args: Prisma.CommitGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommitGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommitCountArgs<ExtArgs>
+            result: $Utils.Optional<CommitCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -963,6 +1053,7 @@ export namespace Prisma {
     user?: UserOmit
     project?: ProjectOmit
     userToProject?: UserToProjectOmit
+    commit?: CommitOmit
   }
 
   /* Types for Logging */
@@ -1075,10 +1166,12 @@ export namespace Prisma {
 
   export type ProjectCountOutputType = {
     userToProjects: number
+    commits: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userToProjects?: boolean | ProjectCountOutputTypeCountUserToProjectsArgs
+    commits?: boolean | ProjectCountOutputTypeCountCommitsArgs
   }
 
   // Custom InputTypes
@@ -1097,6 +1190,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountUserToProjectsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserToProjectWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountCommitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommitWhereInput
   }
 
 
@@ -2420,6 +2520,7 @@ export namespace Prisma {
     githubUrl?: boolean
     deletedAt?: boolean
     userToProjects?: boolean | Project$userToProjectsArgs<ExtArgs>
+    commits?: boolean | Project$commitsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -2453,6 +2554,7 @@ export namespace Prisma {
   export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "githubUrl" | "deletedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userToProjects?: boolean | Project$userToProjectsArgs<ExtArgs>
+    commits?: boolean | Project$commitsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2462,6 +2564,7 @@ export namespace Prisma {
     name: "Project"
     objects: {
       userToProjects: Prisma.$UserToProjectPayload<ExtArgs>[]
+      commits: Prisma.$CommitPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2865,6 +2968,7 @@ export namespace Prisma {
   export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     userToProjects<T extends Project$userToProjectsArgs<ExtArgs> = {}>(args?: Subset<T, Project$userToProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserToProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    commits<T extends Project$commitsArgs<ExtArgs> = {}>(args?: Subset<T, Project$commitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3309,6 +3413,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserToProjectScalarFieldEnum | UserToProjectScalarFieldEnum[]
+  }
+
+  /**
+   * Project.commits
+   */
+  export type Project$commitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    where?: CommitWhereInput
+    orderBy?: CommitOrderByWithRelationInput | CommitOrderByWithRelationInput[]
+    cursor?: CommitWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommitScalarFieldEnum | CommitScalarFieldEnum[]
   }
 
   /**
@@ -4397,6 +4525,1129 @@ export namespace Prisma {
 
 
   /**
+   * Model Commit
+   */
+
+  export type AggregateCommit = {
+    _count: CommitCountAggregateOutputType | null
+    _min: CommitMinAggregateOutputType | null
+    _max: CommitMaxAggregateOutputType | null
+  }
+
+  export type CommitMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    projectId: string | null
+    commitMessage: string | null
+    commitHash: string | null
+    commitAuthorName: string | null
+    commitAuthorAvatar: string | null
+    commitDate: Date | null
+    summary: string | null
+  }
+
+  export type CommitMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    projectId: string | null
+    commitMessage: string | null
+    commitHash: string | null
+    commitAuthorName: string | null
+    commitAuthorAvatar: string | null
+    commitDate: Date | null
+    summary: string | null
+  }
+
+  export type CommitCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    projectId: number
+    commitMessage: number
+    commitHash: number
+    commitAuthorName: number
+    commitAuthorAvatar: number
+    commitDate: number
+    summary: number
+    _all: number
+  }
+
+
+  export type CommitMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    projectId?: true
+    commitMessage?: true
+    commitHash?: true
+    commitAuthorName?: true
+    commitAuthorAvatar?: true
+    commitDate?: true
+    summary?: true
+  }
+
+  export type CommitMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    projectId?: true
+    commitMessage?: true
+    commitHash?: true
+    commitAuthorName?: true
+    commitAuthorAvatar?: true
+    commitDate?: true
+    summary?: true
+  }
+
+  export type CommitCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    projectId?: true
+    commitMessage?: true
+    commitHash?: true
+    commitAuthorName?: true
+    commitAuthorAvatar?: true
+    commitDate?: true
+    summary?: true
+    _all?: true
+  }
+
+  export type CommitAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Commit to aggregate.
+     */
+    where?: CommitWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commits to fetch.
+     */
+    orderBy?: CommitOrderByWithRelationInput | CommitOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommitWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commits.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Commits
+    **/
+    _count?: true | CommitCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommitMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommitMaxAggregateInputType
+  }
+
+  export type GetCommitAggregateType<T extends CommitAggregateArgs> = {
+        [P in keyof T & keyof AggregateCommit]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCommit[P]>
+      : GetScalarType<T[P], AggregateCommit[P]>
+  }
+
+
+
+
+  export type CommitGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommitWhereInput
+    orderBy?: CommitOrderByWithAggregationInput | CommitOrderByWithAggregationInput[]
+    by: CommitScalarFieldEnum[] | CommitScalarFieldEnum
+    having?: CommitScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommitCountAggregateInputType | true
+    _min?: CommitMinAggregateInputType
+    _max?: CommitMaxAggregateInputType
+  }
+
+  export type CommitGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    projectId: string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date
+    summary: string
+    _count: CommitCountAggregateOutputType | null
+    _min: CommitMinAggregateOutputType | null
+    _max: CommitMaxAggregateOutputType | null
+  }
+
+  type GetCommitGroupByPayload<T extends CommitGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommitGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommitGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommitGroupByOutputType[P]>
+            : GetScalarType<T[P], CommitGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommitSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    projectId?: boolean
+    commitMessage?: boolean
+    commitHash?: boolean
+    commitAuthorName?: boolean
+    commitAuthorAvatar?: boolean
+    commitDate?: boolean
+    summary?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["commit"]>
+
+  export type CommitSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    projectId?: boolean
+    commitMessage?: boolean
+    commitHash?: boolean
+    commitAuthorName?: boolean
+    commitAuthorAvatar?: boolean
+    commitDate?: boolean
+    summary?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["commit"]>
+
+  export type CommitSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    projectId?: boolean
+    commitMessage?: boolean
+    commitHash?: boolean
+    commitAuthorName?: boolean
+    commitAuthorAvatar?: boolean
+    commitDate?: boolean
+    summary?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["commit"]>
+
+  export type CommitSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    projectId?: boolean
+    commitMessage?: boolean
+    commitHash?: boolean
+    commitAuthorName?: boolean
+    commitAuthorAvatar?: boolean
+    commitDate?: boolean
+    summary?: boolean
+  }
+
+  export type CommitOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "projectId" | "commitMessage" | "commitHash" | "commitAuthorName" | "commitAuthorAvatar" | "commitDate" | "summary", ExtArgs["result"]["commit"]>
+  export type CommitInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type CommitIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type CommitIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+
+  export type $CommitPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Commit"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      updatedAt: Date
+      projectId: string
+      commitMessage: string
+      commitHash: string
+      commitAuthorName: string
+      commitAuthorAvatar: string
+      commitDate: Date
+      summary: string
+    }, ExtArgs["result"]["commit"]>
+    composites: {}
+  }
+
+  type CommitGetPayload<S extends boolean | null | undefined | CommitDefaultArgs> = $Result.GetResult<Prisma.$CommitPayload, S>
+
+  type CommitCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommitFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommitCountAggregateInputType | true
+    }
+
+  export interface CommitDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Commit'], meta: { name: 'Commit' } }
+    /**
+     * Find zero or one Commit that matches the filter.
+     * @param {CommitFindUniqueArgs} args - Arguments to find a Commit
+     * @example
+     * // Get one Commit
+     * const commit = await prisma.commit.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommitFindUniqueArgs>(args: SelectSubset<T, CommitFindUniqueArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Commit that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommitFindUniqueOrThrowArgs} args - Arguments to find a Commit
+     * @example
+     * // Get one Commit
+     * const commit = await prisma.commit.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommitFindUniqueOrThrowArgs>(args: SelectSubset<T, CommitFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Commit that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitFindFirstArgs} args - Arguments to find a Commit
+     * @example
+     * // Get one Commit
+     * const commit = await prisma.commit.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommitFindFirstArgs>(args?: SelectSubset<T, CommitFindFirstArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Commit that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitFindFirstOrThrowArgs} args - Arguments to find a Commit
+     * @example
+     * // Get one Commit
+     * const commit = await prisma.commit.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommitFindFirstOrThrowArgs>(args?: SelectSubset<T, CommitFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Commits that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Commits
+     * const commits = await prisma.commit.findMany()
+     * 
+     * // Get first 10 Commits
+     * const commits = await prisma.commit.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const commitWithIdOnly = await prisma.commit.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommitFindManyArgs>(args?: SelectSubset<T, CommitFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Commit.
+     * @param {CommitCreateArgs} args - Arguments to create a Commit.
+     * @example
+     * // Create one Commit
+     * const Commit = await prisma.commit.create({
+     *   data: {
+     *     // ... data to create a Commit
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommitCreateArgs>(args: SelectSubset<T, CommitCreateArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Commits.
+     * @param {CommitCreateManyArgs} args - Arguments to create many Commits.
+     * @example
+     * // Create many Commits
+     * const commit = await prisma.commit.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommitCreateManyArgs>(args?: SelectSubset<T, CommitCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Commits and returns the data saved in the database.
+     * @param {CommitCreateManyAndReturnArgs} args - Arguments to create many Commits.
+     * @example
+     * // Create many Commits
+     * const commit = await prisma.commit.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Commits and only return the `id`
+     * const commitWithIdOnly = await prisma.commit.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommitCreateManyAndReturnArgs>(args?: SelectSubset<T, CommitCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Commit.
+     * @param {CommitDeleteArgs} args - Arguments to delete one Commit.
+     * @example
+     * // Delete one Commit
+     * const Commit = await prisma.commit.delete({
+     *   where: {
+     *     // ... filter to delete one Commit
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommitDeleteArgs>(args: SelectSubset<T, CommitDeleteArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Commit.
+     * @param {CommitUpdateArgs} args - Arguments to update one Commit.
+     * @example
+     * // Update one Commit
+     * const commit = await prisma.commit.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommitUpdateArgs>(args: SelectSubset<T, CommitUpdateArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Commits.
+     * @param {CommitDeleteManyArgs} args - Arguments to filter Commits to delete.
+     * @example
+     * // Delete a few Commits
+     * const { count } = await prisma.commit.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommitDeleteManyArgs>(args?: SelectSubset<T, CommitDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Commits.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Commits
+     * const commit = await prisma.commit.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommitUpdateManyArgs>(args: SelectSubset<T, CommitUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Commits and returns the data updated in the database.
+     * @param {CommitUpdateManyAndReturnArgs} args - Arguments to update many Commits.
+     * @example
+     * // Update many Commits
+     * const commit = await prisma.commit.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Commits and only return the `id`
+     * const commitWithIdOnly = await prisma.commit.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommitUpdateManyAndReturnArgs>(args: SelectSubset<T, CommitUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Commit.
+     * @param {CommitUpsertArgs} args - Arguments to update or create a Commit.
+     * @example
+     * // Update or create a Commit
+     * const commit = await prisma.commit.upsert({
+     *   create: {
+     *     // ... data to create a Commit
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Commit we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommitUpsertArgs>(args: SelectSubset<T, CommitUpsertArgs<ExtArgs>>): Prisma__CommitClient<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Commits.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitCountArgs} args - Arguments to filter Commits to count.
+     * @example
+     * // Count the number of Commits
+     * const count = await prisma.commit.count({
+     *   where: {
+     *     // ... the filter for the Commits we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommitCountArgs>(
+      args?: Subset<T, CommitCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommitCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Commit.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommitAggregateArgs>(args: Subset<T, CommitAggregateArgs>): Prisma.PrismaPromise<GetCommitAggregateType<T>>
+
+    /**
+     * Group by Commit.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommitGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommitGroupByArgs['orderBy'] }
+        : { orderBy?: CommitGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommitGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommitGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Commit model
+   */
+  readonly fields: CommitFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Commit.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommitClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Commit model
+   */
+  interface CommitFieldRefs {
+    readonly id: FieldRef<"Commit", 'String'>
+    readonly createdAt: FieldRef<"Commit", 'DateTime'>
+    readonly updatedAt: FieldRef<"Commit", 'DateTime'>
+    readonly projectId: FieldRef<"Commit", 'String'>
+    readonly commitMessage: FieldRef<"Commit", 'String'>
+    readonly commitHash: FieldRef<"Commit", 'String'>
+    readonly commitAuthorName: FieldRef<"Commit", 'String'>
+    readonly commitAuthorAvatar: FieldRef<"Commit", 'String'>
+    readonly commitDate: FieldRef<"Commit", 'DateTime'>
+    readonly summary: FieldRef<"Commit", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Commit findUnique
+   */
+  export type CommitFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * Filter, which Commit to fetch.
+     */
+    where: CommitWhereUniqueInput
+  }
+
+  /**
+   * Commit findUniqueOrThrow
+   */
+  export type CommitFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * Filter, which Commit to fetch.
+     */
+    where: CommitWhereUniqueInput
+  }
+
+  /**
+   * Commit findFirst
+   */
+  export type CommitFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * Filter, which Commit to fetch.
+     */
+    where?: CommitWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commits to fetch.
+     */
+    orderBy?: CommitOrderByWithRelationInput | CommitOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Commits.
+     */
+    cursor?: CommitWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commits.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Commits.
+     */
+    distinct?: CommitScalarFieldEnum | CommitScalarFieldEnum[]
+  }
+
+  /**
+   * Commit findFirstOrThrow
+   */
+  export type CommitFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * Filter, which Commit to fetch.
+     */
+    where?: CommitWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commits to fetch.
+     */
+    orderBy?: CommitOrderByWithRelationInput | CommitOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Commits.
+     */
+    cursor?: CommitWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commits.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Commits.
+     */
+    distinct?: CommitScalarFieldEnum | CommitScalarFieldEnum[]
+  }
+
+  /**
+   * Commit findMany
+   */
+  export type CommitFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * Filter, which Commits to fetch.
+     */
+    where?: CommitWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commits to fetch.
+     */
+    orderBy?: CommitOrderByWithRelationInput | CommitOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Commits.
+     */
+    cursor?: CommitWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commits from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commits.
+     */
+    skip?: number
+    distinct?: CommitScalarFieldEnum | CommitScalarFieldEnum[]
+  }
+
+  /**
+   * Commit create
+   */
+  export type CommitCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Commit.
+     */
+    data: XOR<CommitCreateInput, CommitUncheckedCreateInput>
+  }
+
+  /**
+   * Commit createMany
+   */
+  export type CommitCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Commits.
+     */
+    data: CommitCreateManyInput | CommitCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Commit createManyAndReturn
+   */
+  export type CommitCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * The data used to create many Commits.
+     */
+    data: CommitCreateManyInput | CommitCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Commit update
+   */
+  export type CommitUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Commit.
+     */
+    data: XOR<CommitUpdateInput, CommitUncheckedUpdateInput>
+    /**
+     * Choose, which Commit to update.
+     */
+    where: CommitWhereUniqueInput
+  }
+
+  /**
+   * Commit updateMany
+   */
+  export type CommitUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Commits.
+     */
+    data: XOR<CommitUpdateManyMutationInput, CommitUncheckedUpdateManyInput>
+    /**
+     * Filter which Commits to update
+     */
+    where?: CommitWhereInput
+    /**
+     * Limit how many Commits to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Commit updateManyAndReturn
+   */
+  export type CommitUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * The data used to update Commits.
+     */
+    data: XOR<CommitUpdateManyMutationInput, CommitUncheckedUpdateManyInput>
+    /**
+     * Filter which Commits to update
+     */
+    where?: CommitWhereInput
+    /**
+     * Limit how many Commits to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Commit upsert
+   */
+  export type CommitUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Commit to update in case it exists.
+     */
+    where: CommitWhereUniqueInput
+    /**
+     * In case the Commit found by the `where` argument doesn't exist, create a new Commit with this data.
+     */
+    create: XOR<CommitCreateInput, CommitUncheckedCreateInput>
+    /**
+     * In case the Commit was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommitUpdateInput, CommitUncheckedUpdateInput>
+  }
+
+  /**
+   * Commit delete
+   */
+  export type CommitDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+    /**
+     * Filter which Commit to delete.
+     */
+    where: CommitWhereUniqueInput
+  }
+
+  /**
+   * Commit deleteMany
+   */
+  export type CommitDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Commits to delete
+     */
+    where?: CommitWhereInput
+    /**
+     * Limit how many Commits to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Commit without action
+   */
+  export type CommitDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commit
+     */
+    select?: CommitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commit
+     */
+    omit?: CommitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4445,6 +5696,22 @@ export namespace Prisma {
   };
 
   export type UserToProjectScalarFieldEnum = (typeof UserToProjectScalarFieldEnum)[keyof typeof UserToProjectScalarFieldEnum]
+
+
+  export const CommitScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    projectId: 'projectId',
+    commitMessage: 'commitMessage',
+    commitHash: 'commitHash',
+    commitAuthorName: 'commitAuthorName',
+    commitAuthorAvatar: 'commitAuthorAvatar',
+    commitDate: 'commitDate',
+    summary: 'summary'
+  };
+
+  export type CommitScalarFieldEnum = (typeof CommitScalarFieldEnum)[keyof typeof CommitScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4618,6 +5885,7 @@ export namespace Prisma {
     githubUrl?: StringFilter<"Project"> | string
     deletedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     userToProjects?: UserToProjectListRelationFilter
+    commits?: CommitListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -4628,6 +5896,7 @@ export namespace Prisma {
     githubUrl?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     userToProjects?: UserToProjectOrderByRelationAggregateInput
+    commits?: CommitOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -4641,6 +5910,7 @@ export namespace Prisma {
     githubUrl?: StringFilter<"Project"> | string
     deletedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     userToProjects?: UserToProjectListRelationFilter
+    commits?: CommitListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -4724,6 +5994,86 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserToProject"> | Date | string
     userId?: StringWithAggregatesFilter<"UserToProject"> | string
     projectId?: StringWithAggregatesFilter<"UserToProject"> | string
+  }
+
+  export type CommitWhereInput = {
+    AND?: CommitWhereInput | CommitWhereInput[]
+    OR?: CommitWhereInput[]
+    NOT?: CommitWhereInput | CommitWhereInput[]
+    id?: StringFilter<"Commit"> | string
+    createdAt?: DateTimeFilter<"Commit"> | Date | string
+    updatedAt?: DateTimeFilter<"Commit"> | Date | string
+    projectId?: StringFilter<"Commit"> | string
+    commitMessage?: StringFilter<"Commit"> | string
+    commitHash?: StringFilter<"Commit"> | string
+    commitAuthorName?: StringFilter<"Commit"> | string
+    commitAuthorAvatar?: StringFilter<"Commit"> | string
+    commitDate?: DateTimeFilter<"Commit"> | Date | string
+    summary?: StringFilter<"Commit"> | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }
+
+  export type CommitOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    projectId?: SortOrder
+    commitMessage?: SortOrder
+    commitHash?: SortOrder
+    commitAuthorName?: SortOrder
+    commitAuthorAvatar?: SortOrder
+    commitDate?: SortOrder
+    summary?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+  }
+
+  export type CommitWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CommitWhereInput | CommitWhereInput[]
+    OR?: CommitWhereInput[]
+    NOT?: CommitWhereInput | CommitWhereInput[]
+    createdAt?: DateTimeFilter<"Commit"> | Date | string
+    updatedAt?: DateTimeFilter<"Commit"> | Date | string
+    projectId?: StringFilter<"Commit"> | string
+    commitMessage?: StringFilter<"Commit"> | string
+    commitHash?: StringFilter<"Commit"> | string
+    commitAuthorName?: StringFilter<"Commit"> | string
+    commitAuthorAvatar?: StringFilter<"Commit"> | string
+    commitDate?: DateTimeFilter<"Commit"> | Date | string
+    summary?: StringFilter<"Commit"> | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }, "id">
+
+  export type CommitOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    projectId?: SortOrder
+    commitMessage?: SortOrder
+    commitHash?: SortOrder
+    commitAuthorName?: SortOrder
+    commitAuthorAvatar?: SortOrder
+    commitDate?: SortOrder
+    summary?: SortOrder
+    _count?: CommitCountOrderByAggregateInput
+    _max?: CommitMaxOrderByAggregateInput
+    _min?: CommitMinOrderByAggregateInput
+  }
+
+  export type CommitScalarWhereWithAggregatesInput = {
+    AND?: CommitScalarWhereWithAggregatesInput | CommitScalarWhereWithAggregatesInput[]
+    OR?: CommitScalarWhereWithAggregatesInput[]
+    NOT?: CommitScalarWhereWithAggregatesInput | CommitScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Commit"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Commit"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Commit"> | Date | string
+    projectId?: StringWithAggregatesFilter<"Commit"> | string
+    commitMessage?: StringWithAggregatesFilter<"Commit"> | string
+    commitHash?: StringWithAggregatesFilter<"Commit"> | string
+    commitAuthorName?: StringWithAggregatesFilter<"Commit"> | string
+    commitAuthorAvatar?: StringWithAggregatesFilter<"Commit"> | string
+    commitDate?: DateTimeWithAggregatesFilter<"Commit"> | Date | string
+    summary?: StringWithAggregatesFilter<"Commit"> | string
   }
 
   export type UserCreateInput = {
@@ -4815,6 +6165,7 @@ export namespace Prisma {
     githubUrl: string
     deletedAt?: Date | string | null
     userToProjects?: UserToProjectCreateNestedManyWithoutProjectInput
+    commits?: CommitCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -4825,6 +6176,7 @@ export namespace Prisma {
     githubUrl: string
     deletedAt?: Date | string | null
     userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutProjectInput
+    commits?: CommitUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -4835,6 +6187,7 @@ export namespace Prisma {
     githubUrl?: StringFieldUpdateOperationsInput | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userToProjects?: UserToProjectUpdateManyWithoutProjectNestedInput
+    commits?: CommitUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -4845,6 +6198,7 @@ export namespace Prisma {
     githubUrl?: StringFieldUpdateOperationsInput | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userToProjects?: UserToProjectUncheckedUpdateManyWithoutProjectNestedInput
+    commits?: CommitUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -4926,6 +6280,96 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommitCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date | string
+    summary: string
+    project: ProjectCreateNestedOneWithoutCommitsInput
+  }
+
+  export type CommitUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projectId: string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date | string
+    summary: string
+  }
+
+  export type CommitUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
+    project?: ProjectUpdateOneRequiredWithoutCommitsNestedInput
+  }
+
+  export type CommitUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommitCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projectId: string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date | string
+    summary: string
+  }
+
+  export type CommitUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommitUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -5113,6 +6557,16 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type CommitListRelationFilter = {
+    every?: CommitWhereInput
+    some?: CommitWhereInput
+    none?: CommitWhereInput
+  }
+
+  export type CommitOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
@@ -5193,6 +6647,45 @@ export namespace Prisma {
     projectId?: SortOrder
   }
 
+  export type CommitCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    projectId?: SortOrder
+    commitMessage?: SortOrder
+    commitHash?: SortOrder
+    commitAuthorName?: SortOrder
+    commitAuthorAvatar?: SortOrder
+    commitDate?: SortOrder
+    summary?: SortOrder
+  }
+
+  export type CommitMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    projectId?: SortOrder
+    commitMessage?: SortOrder
+    commitHash?: SortOrder
+    commitAuthorName?: SortOrder
+    commitAuthorAvatar?: SortOrder
+    commitDate?: SortOrder
+    summary?: SortOrder
+  }
+
+  export type CommitMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    projectId?: SortOrder
+    commitMessage?: SortOrder
+    commitHash?: SortOrder
+    commitAuthorName?: SortOrder
+    commitAuthorAvatar?: SortOrder
+    commitDate?: SortOrder
+    summary?: SortOrder
+  }
+
   export type UserToProjectCreateNestedManyWithoutUserInput = {
     create?: XOR<UserToProjectCreateWithoutUserInput, UserToProjectUncheckedCreateWithoutUserInput> | UserToProjectCreateWithoutUserInput[] | UserToProjectUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutUserInput | UserToProjectCreateOrConnectWithoutUserInput[]
@@ -5262,11 +6755,25 @@ export namespace Prisma {
     connect?: UserToProjectWhereUniqueInput | UserToProjectWhereUniqueInput[]
   }
 
+  export type CommitCreateNestedManyWithoutProjectInput = {
+    create?: XOR<CommitCreateWithoutProjectInput, CommitUncheckedCreateWithoutProjectInput> | CommitCreateWithoutProjectInput[] | CommitUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: CommitCreateOrConnectWithoutProjectInput | CommitCreateOrConnectWithoutProjectInput[]
+    createMany?: CommitCreateManyProjectInputEnvelope
+    connect?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+  }
+
   export type UserToProjectUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<UserToProjectCreateWithoutProjectInput, UserToProjectUncheckedCreateWithoutProjectInput> | UserToProjectCreateWithoutProjectInput[] | UserToProjectUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutProjectInput | UserToProjectCreateOrConnectWithoutProjectInput[]
     createMany?: UserToProjectCreateManyProjectInputEnvelope
     connect?: UserToProjectWhereUniqueInput | UserToProjectWhereUniqueInput[]
+  }
+
+  export type CommitUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<CommitCreateWithoutProjectInput, CommitUncheckedCreateWithoutProjectInput> | CommitCreateWithoutProjectInput[] | CommitUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: CommitCreateOrConnectWithoutProjectInput | CommitCreateOrConnectWithoutProjectInput[]
+    createMany?: CommitCreateManyProjectInputEnvelope
+    connect?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -5287,6 +6794,20 @@ export namespace Prisma {
     deleteMany?: UserToProjectScalarWhereInput | UserToProjectScalarWhereInput[]
   }
 
+  export type CommitUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<CommitCreateWithoutProjectInput, CommitUncheckedCreateWithoutProjectInput> | CommitCreateWithoutProjectInput[] | CommitUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: CommitCreateOrConnectWithoutProjectInput | CommitCreateOrConnectWithoutProjectInput[]
+    upsert?: CommitUpsertWithWhereUniqueWithoutProjectInput | CommitUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: CommitCreateManyProjectInputEnvelope
+    set?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    disconnect?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    delete?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    connect?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    update?: CommitUpdateWithWhereUniqueWithoutProjectInput | CommitUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: CommitUpdateManyWithWhereWithoutProjectInput | CommitUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: CommitScalarWhereInput | CommitScalarWhereInput[]
+  }
+
   export type UserToProjectUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<UserToProjectCreateWithoutProjectInput, UserToProjectUncheckedCreateWithoutProjectInput> | UserToProjectCreateWithoutProjectInput[] | UserToProjectUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutProjectInput | UserToProjectCreateOrConnectWithoutProjectInput[]
@@ -5299,6 +6820,20 @@ export namespace Prisma {
     update?: UserToProjectUpdateWithWhereUniqueWithoutProjectInput | UserToProjectUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: UserToProjectUpdateManyWithWhereWithoutProjectInput | UserToProjectUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: UserToProjectScalarWhereInput | UserToProjectScalarWhereInput[]
+  }
+
+  export type CommitUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<CommitCreateWithoutProjectInput, CommitUncheckedCreateWithoutProjectInput> | CommitCreateWithoutProjectInput[] | CommitUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: CommitCreateOrConnectWithoutProjectInput | CommitCreateOrConnectWithoutProjectInput[]
+    upsert?: CommitUpsertWithWhereUniqueWithoutProjectInput | CommitUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: CommitCreateManyProjectInputEnvelope
+    set?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    disconnect?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    delete?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    connect?: CommitWhereUniqueInput | CommitWhereUniqueInput[]
+    update?: CommitUpdateWithWhereUniqueWithoutProjectInput | CommitUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: CommitUpdateManyWithWhereWithoutProjectInput | CommitUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: CommitScalarWhereInput | CommitScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutUserToProjectsInput = {
@@ -5327,6 +6862,20 @@ export namespace Prisma {
     upsert?: ProjectUpsertWithoutUserToProjectsInput
     connect?: ProjectWhereUniqueInput
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutUserToProjectsInput, ProjectUpdateWithoutUserToProjectsInput>, ProjectUncheckedUpdateWithoutUserToProjectsInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutCommitsInput = {
+    create?: XOR<ProjectCreateWithoutCommitsInput, ProjectUncheckedCreateWithoutCommitsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutCommitsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutCommitsNestedInput = {
+    create?: XOR<ProjectCreateWithoutCommitsInput, ProjectUncheckedCreateWithoutCommitsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutCommitsInput
+    upsert?: ProjectUpsertWithoutCommitsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutCommitsInput, ProjectUpdateWithoutCommitsInput>, ProjectUncheckedUpdateWithoutCommitsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -5565,6 +7114,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CommitCreateWithoutProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date | string
+    summary: string
+  }
+
+  export type CommitUncheckedCreateWithoutProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date | string
+    summary: string
+  }
+
+  export type CommitCreateOrConnectWithoutProjectInput = {
+    where: CommitWhereUniqueInput
+    create: XOR<CommitCreateWithoutProjectInput, CommitUncheckedCreateWithoutProjectInput>
+  }
+
+  export type CommitCreateManyProjectInputEnvelope = {
+    data: CommitCreateManyProjectInput | CommitCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserToProjectUpsertWithWhereUniqueWithoutProjectInput = {
     where: UserToProjectWhereUniqueInput
     update: XOR<UserToProjectUpdateWithoutProjectInput, UserToProjectUncheckedUpdateWithoutProjectInput>
@@ -5579,6 +7162,38 @@ export namespace Prisma {
   export type UserToProjectUpdateManyWithWhereWithoutProjectInput = {
     where: UserToProjectScalarWhereInput
     data: XOR<UserToProjectUpdateManyMutationInput, UserToProjectUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type CommitUpsertWithWhereUniqueWithoutProjectInput = {
+    where: CommitWhereUniqueInput
+    update: XOR<CommitUpdateWithoutProjectInput, CommitUncheckedUpdateWithoutProjectInput>
+    create: XOR<CommitCreateWithoutProjectInput, CommitUncheckedCreateWithoutProjectInput>
+  }
+
+  export type CommitUpdateWithWhereUniqueWithoutProjectInput = {
+    where: CommitWhereUniqueInput
+    data: XOR<CommitUpdateWithoutProjectInput, CommitUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type CommitUpdateManyWithWhereWithoutProjectInput = {
+    where: CommitScalarWhereInput
+    data: XOR<CommitUpdateManyMutationInput, CommitUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type CommitScalarWhereInput = {
+    AND?: CommitScalarWhereInput | CommitScalarWhereInput[]
+    OR?: CommitScalarWhereInput[]
+    NOT?: CommitScalarWhereInput | CommitScalarWhereInput[]
+    id?: StringFilter<"Commit"> | string
+    createdAt?: DateTimeFilter<"Commit"> | Date | string
+    updatedAt?: DateTimeFilter<"Commit"> | Date | string
+    projectId?: StringFilter<"Commit"> | string
+    commitMessage?: StringFilter<"Commit"> | string
+    commitHash?: StringFilter<"Commit"> | string
+    commitAuthorName?: StringFilter<"Commit"> | string
+    commitAuthorAvatar?: StringFilter<"Commit"> | string
+    commitDate?: DateTimeFilter<"Commit"> | Date | string
+    summary?: StringFilter<"Commit"> | string
   }
 
   export type UserCreateWithoutUserToProjectsInput = {
@@ -5615,6 +7230,7 @@ export namespace Prisma {
     name: string
     githubUrl: string
     deletedAt?: Date | string | null
+    commits?: CommitCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutUserToProjectsInput = {
@@ -5624,6 +7240,7 @@ export namespace Prisma {
     name: string
     githubUrl: string
     deletedAt?: Date | string | null
+    commits?: CommitUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutUserToProjectsInput = {
@@ -5682,6 +7299,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     githubUrl?: StringFieldUpdateOperationsInput | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    commits?: CommitUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutUserToProjectsInput = {
@@ -5691,6 +7309,63 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     githubUrl?: StringFieldUpdateOperationsInput | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    commits?: CommitUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectCreateWithoutCommitsInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    githubUrl: string
+    deletedAt?: Date | string | null
+    userToProjects?: UserToProjectCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutCommitsInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    githubUrl: string
+    deletedAt?: Date | string | null
+    userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutCommitsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutCommitsInput, ProjectUncheckedCreateWithoutCommitsInput>
+  }
+
+  export type ProjectUpsertWithoutCommitsInput = {
+    update: XOR<ProjectUpdateWithoutCommitsInput, ProjectUncheckedUpdateWithoutCommitsInput>
+    create: XOR<ProjectCreateWithoutCommitsInput, ProjectUncheckedCreateWithoutCommitsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutCommitsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutCommitsInput, ProjectUncheckedUpdateWithoutCommitsInput>
+  }
+
+  export type ProjectUpdateWithoutCommitsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    githubUrl?: StringFieldUpdateOperationsInput | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userToProjects?: UserToProjectUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutCommitsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    githubUrl?: StringFieldUpdateOperationsInput | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userToProjects?: UserToProjectUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserToProjectCreateManyUserInput = {
@@ -5728,6 +7403,18 @@ export namespace Prisma {
     userId: string
   }
 
+  export type CommitCreateManyProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    commitMessage: string
+    commitHash: string
+    commitAuthorName: string
+    commitAuthorAvatar: string
+    commitDate: Date | string
+    summary: string
+  }
+
   export type UserToProjectUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5747,6 +7434,42 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommitUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommitUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommitUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitMessage?: StringFieldUpdateOperationsInput | string
+    commitHash?: StringFieldUpdateOperationsInput | string
+    commitAuthorName?: StringFieldUpdateOperationsInput | string
+    commitAuthorAvatar?: StringFieldUpdateOperationsInput | string
+    commitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    summary?: StringFieldUpdateOperationsInput | string
   }
 
 
