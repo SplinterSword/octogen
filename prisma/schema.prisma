@@ -4,11 +4,13 @@
 generator client {
     provider = "prisma-client-js"
     output   = "../generated/prisma"
+    previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
+    extensions = [vector]
 }
 
 model User {
@@ -38,6 +40,7 @@ model Project {
     
     userToProjects UserToProject[]
     commits Commit[]
+    sourceCodeEmbeddings SourceCodeEmbedding[]
 }
 
 model UserToProject {
@@ -77,7 +80,7 @@ model SourceCodeEmbedding {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     
-    summaryEmbedding Unsupported("vector(768))?
+    summaryEmbedding Unsupported("vector(768)")?
     sourceCode String
     fileName String
     summary String
