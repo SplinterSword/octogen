@@ -71,3 +71,18 @@ model Commit {
     //ai summary
     summary String
 }
+
+model SourceCodeEmbedding {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    summaryEmbedding Unsupported("vector(768))?
+    sourceCode String
+    fileName String
+    summary String
+
+    projectId String
+    project Project @relation(fields: [projectId], references: [id])
+}
+
