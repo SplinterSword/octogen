@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { pullCommits } from "@/lib/github";
 
 export const projectRouter = createTRPCRouter({
     create: protectedProcedure.input(
@@ -20,6 +21,7 @@ export const projectRouter = createTRPCRouter({
                 }
             }
         })
+        await pullCommits(project.id)
         return project
     }),
     getProjects: protectedProcedure.query(async ({ctx}) => {
