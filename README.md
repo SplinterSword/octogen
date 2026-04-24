@@ -1,29 +1,25 @@
-# Create T3 App
+# Octogen
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## Notes: Groq TPM rate limit during commit summarization
 
-## What's next? How do I make an app with this?
+### Problem
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+When creating a project / pulling commits, summarization could fail with Groq tokens-per-minute (TPM) rate limiting.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+This happened because:
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Large diffs were being summarized.
+- Summaries were being generated concurrently across multiple commits (and in the worst case, concurrently across diff chunks).
 
-## Learn More
+### Solution implemented
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+The commit summarization pipeline was updated to reduce concurrency and reduce the amount of text sent to the model:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- In `src/lib/github.ts`:
+  - Diffs are fetched from the GitHub API with `Accept: application/vnd.github.v3.diff`.
+  - Commit summarization is done sequentially (loop + `await`) rather than `Promise.all`, which prevents bursts that exceed TPM.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- In `src/lib/ai-providers.ts`:
+  - The diff is filtered down to meaningful lines via `extractMeaningfulDiff`.
+  - The diff is aggressively trimmed down to stay within a safe token budget before sending to the model.
+  - Chunking is treated as a last resort; when used, chunk requests are processed sequentially and then merged.
