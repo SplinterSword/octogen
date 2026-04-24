@@ -17,5 +17,7 @@ export async function loadGithubRepo(githubUrl: string, githubToken?: string) {
     return docs;
 }
 
-console.log("Loading GitHub repo...");
-console.log(await loadGithubRepo("https://github.com/SplinterSword/PolCon"));
+export const indexGithubRepo = async (projectId: string, githubUrl: string, githubToken?: string) => {
+    const docs = await loadGithubRepo(githubUrl, githubToken);
+    // TODO: Store embeddings in database
+}
