@@ -23,3 +23,7 @@ The commit summarization pipeline was updated to reduce concurrency and reduce t
   - The diff is filtered down to meaningful lines via `extractMeaningfulDiff`.
   - The diff is aggressively trimmed down to stay within a safe token budget before sending to the model.
   - Chunking is treated as a last resort; when used, chunk requests are processed sequentially and then merged.
+
+### Drawbacks
+- It takes too long to process the commits, 
+  - probable fix include caching the summaries, striping the diff in an optimized way to reduce time, and using parallel processing where possible   
