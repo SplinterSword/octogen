@@ -83,7 +83,8 @@ function countTokens(text: string): number {
 }
 
 export const aiSummariseCommit = async (diff: string) => {
-    const filteredDiff = extractMeaningfulDiff(diff);
+    // const filteredDiff = extractMeaningfulDiff(diff);
+    const filteredDiff = diff;
 
     if (!filteredDiff.trim()) {
         return "No meaningful changes to summarize.";
@@ -105,6 +106,7 @@ Output:
 
     // ✅ FAST PATH
     if (tokenCount <= 6000) {
+        console.log("FAST PATH");
         const response = await generateText({
             model: groq("openai/gpt-oss-120b"),
             system: SYSTEM_PROMPT,
@@ -115,24 +117,30 @@ Output:
     }
 
     // 🔥 CHUNKING PATH
+    console.log("CHUNKING PATH");
     const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 2000,
+        chunkSize: 7000,
         chunkOverlap: 200,
     });
 
     const chunks = await splitter.splitText(filteredDiff);
 
-    const partialSummaries = await Promise.all(
-        chunks.map(chunk =>
-            generateText({
-                model: groq("openai/gpt-oss-120b"),
-                system: SYSTEM_PROMPT,
-                prompt: chunk,
-            }).then(res => res.text)
-        )
-    );
+    console.log("Chunks count:", chunks.length);
+
+    const partialSummaries: string[] = [];
+
+    for (const chunk of chunks) {
+        const response = await generateText({
+            model: groq("openai/gpt-oss-120b"),
+            system: SYSTEM_PROMPT,
+            prompt: chunk,
+        });
+
+        partialSummaries.push(response.text);
+    }
 
     // 🧠 FINAL MERGE
+    console.log("FINAL MERGE");
     const final = await generateText({
         model: groq("openai/gpt-oss-120b"),
         system: `Combine multiple git diff summaries into one clean final summary using bullet points.`,
