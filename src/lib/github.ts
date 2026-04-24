@@ -93,10 +93,7 @@ const summarizeCommit = async (githubUrl: string, commitHash: string): Promise<s
     responseType: "text",
   });
 
-  console.log("fetching diff for commit:", commitHash);
-  console.log("github url:", githubUrl);
-  console.log("diff url:", diffUrl);
-  console.log("diff data length:", data.length);
+  console.log("data length:", data.length);
 
   const summary = await aiSummariseCommit(data);
   return summary || "";

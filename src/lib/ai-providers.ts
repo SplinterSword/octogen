@@ -83,20 +83,23 @@ function countTokens(text: string): number {
 }
 
 export const aiSummariseCommit = async (diff: string) => {
-    // const filteredDiff = extractMeaningfulDiff(diff);
-    const filteredDiff = diff;
+    let filteredDiff = extractMeaningfulDiff(diff);
 
     if (!filteredDiff.trim()) {
         return "No meaningful changes to summarize.";
     }
 
+    console.log("filtered diff length:", filteredDiff.length);
+
     const tokenCount = countTokens(filteredDiff);
+
+    console.log("token count:", tokenCount);
 
     const SYSTEM_PROMPT = `Summarize a git diff into concise bullet points.
 
 Rules:
 - + added, - removed
-- Ignore context
+- Ignore context lines
 - Focus on what changed and why (if clear)
 
 Output:
@@ -104,48 +107,59 @@ Output:
 - Add file names in [brackets] if useful
 - Keep it short`;
 
+    while (countTokens(filteredDiff) > 1500) {
+        filteredDiff = filteredDiff.slice(0, -1);
+    }
+
     // ✅ FAST PATH
-    if (tokenCount <= 6000) {
+    if (countTokens(filteredDiff) <= 2000) {
         console.log("FAST PATH");
-        const response = await generateText({
-            model: groq("openai/gpt-oss-120b"),
-            system: SYSTEM_PROMPT,
-            prompt: filteredDiff,
+        try {
+            const response = await generateText({
+                model: groq("openai/gpt-oss-120b"),
+                system: SYSTEM_PROMPT,
+                prompt: filteredDiff,
+            });
+
+            return response.text;
+        }
+        catch (error) {
+            console.error("Error generating text:", error);
+            return "Error generating summary.";
+        }
+    }
+    else {
+        // 🔥 CHUNKING PATH (rare)
+        console.log("CHUNKING PATH");
+        const splitter = new RecursiveCharacterTextSplitter({
+            chunkSize: 7000,
+            chunkOverlap: 200,
         });
 
-        return response.text;
-    }
+        const chunks = await splitter.splitText(filteredDiff);
 
-    // 🔥 CHUNKING PATH
-    console.log("CHUNKING PATH");
-    const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 7000,
-        chunkOverlap: 200,
-    });
+        console.log("Chunks count:", chunks.length);
 
-    const chunks = await splitter.splitText(filteredDiff);
+        const partialSummaries: string[] = [];
 
-    console.log("Chunks count:", chunks.length);
+        for (const chunk of chunks) {
+            const response = await generateText({
+                model: groq("openai/gpt-oss-120b"),
+                system: SYSTEM_PROMPT,
+                prompt: chunk,
+            });
 
-    const partialSummaries: string[] = [];
+            partialSummaries.push(response.text);
+        }
 
-    for (const chunk of chunks) {
-        const response = await generateText({
+        // 🧠 FINAL MERGE
+        console.log("FINAL MERGE");
+        const final = await generateText({
             model: groq("openai/gpt-oss-120b"),
-            system: SYSTEM_PROMPT,
-            prompt: chunk,
+            system: `Combine multiple git diff summaries into one clean final summary using bullet points.`,
+            prompt: partialSummaries.join("\n"),
         });
 
-        partialSummaries.push(response.text);
+        return final.text;
     }
-
-    // 🧠 FINAL MERGE
-    console.log("FINAL MERGE");
-    const final = await generateText({
-        model: groq("openai/gpt-oss-120b"),
-        system: `Combine multiple git diff summaries into one clean final summary using bullet points.`,
-        prompt: partialSummaries.join("\n"),
-    });
-
-    return final.text;
 };
