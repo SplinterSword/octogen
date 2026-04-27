@@ -1,10 +1,11 @@
 "use server"
 
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGoogleGenerativeAI, google } from "@ai-sdk/google";
 import { createGroq } from "@ai-sdk/groq";
-import { generateText } from "ai";
+import { generateText, embed } from "ai";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { countTokens, extractMeaningfulDiff } from "./commit-helpers";
+import { Document } from '@langchain/core/documents'
 
 const gemini = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
@@ -96,3 +97,35 @@ Output:
     }
 };
 
+export async function summarizeCode(doc: Document) {
+    console.log("getting summary for", doc.metadata.source);
+
+    const code = doc.pageContent.slice(0, 10000);
+    const response = await generateText({
+        model: groq("openai/gpt-oss-120b"),
+        system: `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects`,
+        prompt: `You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file
+Here is the code:
+---
+${code}
+---
+
+Give a summary no more than 100 words of the code above
+`
+    })
+    return response.text
+}
+
+
+export async function generateEmbedding(summary: string) {
+    try {
+        const result = await embed({
+            model: google.embedding("gemini-embedding-001"),
+            value: summary,
+        });
+        return result.embedding;
+    } catch (error) {
+        console.error("Error generating embeddings:", error);
+        return "Error generating embeddings.";
+    }
+}
