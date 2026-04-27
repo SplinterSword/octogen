@@ -100,11 +100,12 @@ Output:
 export async function summarizeCode(doc: Document) {
     console.log("getting summary for", doc.metadata.source);
 
-    const code = doc.pageContent.slice(0, 10000);
-    const response = await generateText({
-        model: groq("openai/gpt-oss-120b"),
-        system: `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects`,
-        prompt: `You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file
+    try {
+        const code = doc.pageContent.slice(0, 10000);
+        const response = await generateText({
+            model: groq("openai/gpt-oss-120b"),
+            system: `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects`,
+            prompt: `You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file
 Here is the code:
 ---
 ${code}
@@ -112,8 +113,13 @@ ${code}
 
 Give a summary no more than 100 words of the code above
 `
-    })
-    return response.text
+        })
+        return response.text
+    } catch (error) {
+        console.error(`Error generating summary for ${doc.metadata.source}:`, error);
+        return "Error generating summary.";
+    }
+
 }
 
 
@@ -125,7 +131,7 @@ export async function generateEmbedding(summary: string) {
         });
         return result.embedding;
     } catch (error) {
-        console.error("Error generating embeddings:", error);
+        console.error(`Error generating embeddings for summary:`, error);
         return "Error generating embeddings.";
     }
 }
