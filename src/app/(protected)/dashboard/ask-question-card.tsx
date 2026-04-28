@@ -68,12 +68,12 @@ export default function AskQuestionCard() {
                                     }
                                 });
                             }}>
-                                Close
+                                Save
                             </Button>
                         </div>
                     </DialogHeader>
 
-                    <MDEditor.Markdown source={answer} className="max-w-[70vm] !h-full max-h-[40vh] overflow-scroll"/>
+                    <MDEditor.Markdown source={answer} className="max-w-[70vm] !h-full max-h-[40vh] overflow-scroll bg-primary"/>
                     <div className="h-4"></div>
                     <CodeReferences filesReferences={fileReferences} />
 
