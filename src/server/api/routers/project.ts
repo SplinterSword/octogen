@@ -116,6 +116,9 @@ export const projectRouter = createTRPCRouter({
         const meetings = await ctx.db.meeting.findMany({
             where: {
                 projectId: input.projectId,
+            },
+            include: {
+                issues: true
             }
         })
         return meetings
