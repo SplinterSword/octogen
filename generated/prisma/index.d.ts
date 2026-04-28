@@ -8407,6 +8407,7 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    name: string | null
     meetingUrl: string | null
     projectId: string | null
     status: $Enums.MeetingStatus | null
@@ -8416,6 +8417,7 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    name: string | null
     meetingUrl: string | null
     projectId: string | null
     status: $Enums.MeetingStatus | null
@@ -8425,6 +8427,7 @@ export namespace Prisma {
     id: number
     createdAt: number
     updatedAt: number
+    name: number
     meetingUrl: number
     projectId: number
     status: number
@@ -8436,6 +8439,7 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    name?: true
     meetingUrl?: true
     projectId?: true
     status?: true
@@ -8445,6 +8449,7 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    name?: true
     meetingUrl?: true
     projectId?: true
     status?: true
@@ -8454,6 +8459,7 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    name?: true
     meetingUrl?: true
     projectId?: true
     status?: true
@@ -8536,6 +8542,7 @@ export namespace Prisma {
     id: string
     createdAt: Date
     updatedAt: Date
+    name: string
     meetingUrl: string
     projectId: string
     status: $Enums.MeetingStatus
@@ -8562,6 +8569,7 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    name?: boolean
     meetingUrl?: boolean
     projectId?: boolean
     status?: boolean
@@ -8574,6 +8582,7 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    name?: boolean
     meetingUrl?: boolean
     projectId?: boolean
     status?: boolean
@@ -8584,6 +8593,7 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    name?: boolean
     meetingUrl?: boolean
     projectId?: boolean
     status?: boolean
@@ -8594,12 +8604,13 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    name?: boolean
     meetingUrl?: boolean
     projectId?: boolean
     status?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "meetingUrl" | "projectId" | "status", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "meetingUrl" | "projectId" | "status", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     issues?: boolean | Meeting$issuesArgs<ExtArgs>
@@ -8622,6 +8633,7 @@ export namespace Prisma {
       id: string
       createdAt: Date
       updatedAt: Date
+      name: string
       meetingUrl: string
       projectId: string
       status: $Enums.MeetingStatus
@@ -9053,6 +9065,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Meeting", 'String'>
     readonly createdAt: FieldRef<"Meeting", 'DateTime'>
     readonly updatedAt: FieldRef<"Meeting", 'DateTime'>
+    readonly name: FieldRef<"Meeting", 'String'>
     readonly meetingUrl: FieldRef<"Meeting", 'String'>
     readonly projectId: FieldRef<"Meeting", 'String'>
     readonly status: FieldRef<"Meeting", 'MeetingStatus'>
@@ -10702,6 +10715,7 @@ export namespace Prisma {
     id: 'id',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    name: 'name',
     meetingUrl: 'meetingUrl',
     projectId: 'projectId',
     status: 'status'
@@ -11289,6 +11303,7 @@ export namespace Prisma {
     id?: StringFilter<"Meeting"> | string
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
+    name?: StringFilter<"Meeting"> | string
     meetingUrl?: StringFilter<"Meeting"> | string
     projectId?: StringFilter<"Meeting"> | string
     status?: EnumMeetingStatusFilter<"Meeting"> | $Enums.MeetingStatus
@@ -11300,6 +11315,7 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    name?: SortOrder
     meetingUrl?: SortOrder
     projectId?: SortOrder
     status?: SortOrder
@@ -11314,6 +11330,7 @@ export namespace Prisma {
     NOT?: MeetingWhereInput | MeetingWhereInput[]
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
+    name?: StringFilter<"Meeting"> | string
     meetingUrl?: StringFilter<"Meeting"> | string
     projectId?: StringFilter<"Meeting"> | string
     status?: EnumMeetingStatusFilter<"Meeting"> | $Enums.MeetingStatus
@@ -11325,6 +11342,7 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    name?: SortOrder
     meetingUrl?: SortOrder
     projectId?: SortOrder
     status?: SortOrder
@@ -11340,6 +11358,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Meeting"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
+    name?: StringWithAggregatesFilter<"Meeting"> | string
     meetingUrl?: StringWithAggregatesFilter<"Meeting"> | string
     projectId?: StringWithAggregatesFilter<"Meeting"> | string
     status?: EnumMeetingStatusWithAggregatesFilter<"Meeting"> | $Enums.MeetingStatus
@@ -11880,6 +11899,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     status?: $Enums.MeetingStatus
     project: ProjectCreateNestedOneWithoutMeetingsInput
@@ -11890,6 +11910,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     projectId: string
     status?: $Enums.MeetingStatus
@@ -11900,6 +11921,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
     project?: ProjectUpdateOneRequiredWithoutMeetingsNestedInput
@@ -11910,6 +11932,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -11920,6 +11943,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     projectId: string
     status?: $Enums.MeetingStatus
@@ -11929,6 +11953,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
   }
@@ -11937,6 +11962,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -12500,6 +12526,7 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    name?: SortOrder
     meetingUrl?: SortOrder
     projectId?: SortOrder
     status?: SortOrder
@@ -12509,6 +12536,7 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    name?: SortOrder
     meetingUrl?: SortOrder
     projectId?: SortOrder
     status?: SortOrder
@@ -12518,6 +12546,7 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    name?: SortOrder
     meetingUrl?: SortOrder
     projectId?: SortOrder
     status?: SortOrder
@@ -13482,6 +13511,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     status?: $Enums.MeetingStatus
     issues?: IssueCreateNestedManyWithoutMeetingInput
@@ -13491,6 +13521,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     status?: $Enums.MeetingStatus
     issues?: IssueUncheckedCreateNestedManyWithoutMeetingInput
@@ -13622,6 +13653,7 @@ export namespace Prisma {
     id?: StringFilter<"Meeting"> | string
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
+    name?: StringFilter<"Meeting"> | string
     meetingUrl?: StringFilter<"Meeting"> | string
     projectId?: StringFilter<"Meeting"> | string
     status?: EnumMeetingStatusFilter<"Meeting"> | $Enums.MeetingStatus
@@ -14162,6 +14194,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     status?: $Enums.MeetingStatus
     project: ProjectCreateNestedOneWithoutMeetingsInput
@@ -14171,6 +14204,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     projectId: string
     status?: $Enums.MeetingStatus
@@ -14196,6 +14230,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
     project?: ProjectUpdateOneRequiredWithoutMeetingsNestedInput
@@ -14205,6 +14240,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -14320,6 +14356,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    name: string
     meetingUrl: string
     status?: $Enums.MeetingStatus
   }
@@ -14442,6 +14479,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
     issues?: IssueUpdateManyWithoutMeetingNestedInput
@@ -14451,6 +14489,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
     issues?: IssueUncheckedUpdateManyWithoutMeetingNestedInput
@@ -14460,6 +14499,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
     meetingUrl?: StringFieldUpdateOperationsInput | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
   }
