@@ -7,11 +7,11 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { countTokens, extractMeaningfulDiff } from "./commit-helpers";
 import { Document } from '@langchain/core/documents'
 
-const gemini = createGoogleGenerativeAI({
+export const gemini = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
-const groq = createGroq({
+export const groq = createGroq({
     apiKey: process.env.GROQ_API_KEY,
 });
 
@@ -123,15 +123,15 @@ Give a summary no more than 100 words of the code above
 }
 
 
-export async function generateEmbedding(summary: string) {
+export async function generateEmbedding(summary: string): Promise<number[]> {
     try {
         const result = await embed({
-            model: google.embedding("gemini-embedding-001"),
+            model: gemini.embedding("gemini-embedding-001"),
             value: summary,
         });
         return result.embedding;
     } catch (error) {
         console.error(`Error generating embeddings for summary:`, error);
-        return "Error generating embeddings.";
+        throw new Error("Error generating embeddings.");
     }
 }

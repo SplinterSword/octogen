@@ -38,6 +38,11 @@ export type Commit = $Result.DefaultSelection<Prisma.$CommitPayload>
  * 
  */
 export type SourceCodeEmbedding = $Result.DefaultSelection<Prisma.$SourceCodeEmbeddingPayload>
+/**
+ * Model Questions
+ * 
+ */
+export type Questions = $Result.DefaultSelection<Prisma.$QuestionsPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -206,6 +211,16 @@ export class PrismaClient<
     * ```
     */
   get sourceCodeEmbedding(): Prisma.SourceCodeEmbeddingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.questions`: Exposes CRUD operations for the **Questions** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Questions
+    * const questions = await prisma.questions.findMany()
+    * ```
+    */
+  get questions(): Prisma.QuestionsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -651,7 +666,8 @@ export namespace Prisma {
     Project: 'Project',
     UserToProject: 'UserToProject',
     Commit: 'Commit',
-    SourceCodeEmbedding: 'SourceCodeEmbedding'
+    SourceCodeEmbedding: 'SourceCodeEmbedding',
+    Questions: 'Questions'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -670,7 +686,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "project" | "userToProject" | "commit" | "sourceCodeEmbedding"
+      modelProps: "user" | "project" | "userToProject" | "commit" | "sourceCodeEmbedding" | "questions"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1044,6 +1060,80 @@ export namespace Prisma {
           }
         }
       }
+      Questions: {
+        payload: Prisma.$QuestionsPayload<ExtArgs>
+        fields: Prisma.QuestionsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.QuestionsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.QuestionsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>
+          }
+          findFirst: {
+            args: Prisma.QuestionsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.QuestionsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>
+          }
+          findMany: {
+            args: Prisma.QuestionsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>[]
+          }
+          create: {
+            args: Prisma.QuestionsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>
+          }
+          createMany: {
+            args: Prisma.QuestionsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.QuestionsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>[]
+          }
+          delete: {
+            args: Prisma.QuestionsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>
+          }
+          update: {
+            args: Prisma.QuestionsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>
+          }
+          deleteMany: {
+            args: Prisma.QuestionsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.QuestionsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.QuestionsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>[]
+          }
+          upsert: {
+            args: Prisma.QuestionsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$QuestionsPayload>
+          }
+          aggregate: {
+            args: Prisma.QuestionsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateQuestions>
+          }
+          groupBy: {
+            args: Prisma.QuestionsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<QuestionsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.QuestionsCountArgs<ExtArgs>
+            result: $Utils.Optional<QuestionsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1145,6 +1235,7 @@ export namespace Prisma {
     userToProject?: UserToProjectOmit
     commit?: CommitOmit
     sourceCodeEmbedding?: SourceCodeEmbeddingOmit
+    questions?: QuestionsOmit
   }
 
   /* Types for Logging */
@@ -1226,10 +1317,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     userToProjects: number
+    questionsAsked: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userToProjects?: boolean | UserCountOutputTypeCountUserToProjectsArgs
+    questionsAsked?: boolean | UserCountOutputTypeCountQuestionsAskedArgs
   }
 
   // Custom InputTypes
@@ -1250,6 +1343,13 @@ export namespace Prisma {
     where?: UserToProjectWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountQuestionsAskedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuestionsWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -1259,12 +1359,14 @@ export namespace Prisma {
     userToProjects: number
     commits: number
     sourceCodeEmbeddings: number
+    savedQuestions: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userToProjects?: boolean | ProjectCountOutputTypeCountUserToProjectsArgs
     commits?: boolean | ProjectCountOutputTypeCountCommitsArgs
     sourceCodeEmbeddings?: boolean | ProjectCountOutputTypeCountSourceCodeEmbeddingsArgs
+    savedQuestions?: boolean | ProjectCountOutputTypeCountSavedQuestionsArgs
   }
 
   // Custom InputTypes
@@ -1297,6 +1399,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountSourceCodeEmbeddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SourceCodeEmbeddingWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountSavedQuestionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuestionsWhereInput
   }
 
 
@@ -1527,6 +1636,7 @@ export namespace Prisma {
     emailAddresses?: boolean
     credits?: boolean
     userToProjects?: boolean | User$userToProjectsArgs<ExtArgs>
+    questionsAsked?: boolean | User$questionsAskedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1566,6 +1676,7 @@ export namespace Prisma {
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "imageUrl" | "firstName" | "lastName" | "emailAddresses" | "credits", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userToProjects?: boolean | User$userToProjectsArgs<ExtArgs>
+    questionsAsked?: boolean | User$questionsAskedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1575,6 +1686,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       userToProjects: Prisma.$UserToProjectPayload<ExtArgs>[]
+      questionsAsked: Prisma.$QuestionsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1980,6 +2092,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     userToProjects<T extends User$userToProjectsArgs<ExtArgs> = {}>(args?: Subset<T, User$userToProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserToProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    questionsAsked<T extends User$questionsAskedArgs<ExtArgs> = {}>(args?: Subset<T, User$questionsAskedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2429,6 +2542,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.questionsAsked
+   */
+  export type User$questionsAskedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    where?: QuestionsWhereInput
+    orderBy?: QuestionsOrderByWithRelationInput | QuestionsOrderByWithRelationInput[]
+    cursor?: QuestionsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: QuestionsScalarFieldEnum | QuestionsScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2622,6 +2759,7 @@ export namespace Prisma {
     userToProjects?: boolean | Project$userToProjectsArgs<ExtArgs>
     commits?: boolean | Project$commitsArgs<ExtArgs>
     sourceCodeEmbeddings?: boolean | Project$sourceCodeEmbeddingsArgs<ExtArgs>
+    savedQuestions?: boolean | Project$savedQuestionsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -2657,6 +2795,7 @@ export namespace Prisma {
     userToProjects?: boolean | Project$userToProjectsArgs<ExtArgs>
     commits?: boolean | Project$commitsArgs<ExtArgs>
     sourceCodeEmbeddings?: boolean | Project$sourceCodeEmbeddingsArgs<ExtArgs>
+    savedQuestions?: boolean | Project$savedQuestionsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2668,6 +2807,7 @@ export namespace Prisma {
       userToProjects: Prisma.$UserToProjectPayload<ExtArgs>[]
       commits: Prisma.$CommitPayload<ExtArgs>[]
       sourceCodeEmbeddings: Prisma.$SourceCodeEmbeddingPayload<ExtArgs>[]
+      savedQuestions: Prisma.$QuestionsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3073,6 +3213,7 @@ export namespace Prisma {
     userToProjects<T extends Project$userToProjectsArgs<ExtArgs> = {}>(args?: Subset<T, Project$userToProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserToProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     commits<T extends Project$commitsArgs<ExtArgs> = {}>(args?: Subset<T, Project$commitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sourceCodeEmbeddings<T extends Project$sourceCodeEmbeddingsArgs<ExtArgs> = {}>(args?: Subset<T, Project$sourceCodeEmbeddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SourceCodeEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    savedQuestions<T extends Project$savedQuestionsArgs<ExtArgs> = {}>(args?: Subset<T, Project$savedQuestionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3565,6 +3706,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SourceCodeEmbeddingScalarFieldEnum | SourceCodeEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * Project.savedQuestions
+   */
+  export type Project$savedQuestionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    where?: QuestionsWhereInput
+    orderBy?: QuestionsOrderByWithRelationInput | QuestionsOrderByWithRelationInput[]
+    cursor?: QuestionsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: QuestionsScalarFieldEnum | QuestionsScalarFieldEnum[]
   }
 
   /**
@@ -6860,6 +7025,1107 @@ export namespace Prisma {
 
 
   /**
+   * Model Questions
+   */
+
+  export type AggregateQuestions = {
+    _count: QuestionsCountAggregateOutputType | null
+    _min: QuestionsMinAggregateOutputType | null
+    _max: QuestionsMaxAggregateOutputType | null
+  }
+
+  export type QuestionsMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    question: string | null
+    answer: string | null
+    projectId: string | null
+    userId: string | null
+  }
+
+  export type QuestionsMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    question: string | null
+    answer: string | null
+    projectId: string | null
+    userId: string | null
+  }
+
+  export type QuestionsCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    question: number
+    answer: number
+    filesReferences: number
+    projectId: number
+    userId: number
+    _all: number
+  }
+
+
+  export type QuestionsMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    question?: true
+    answer?: true
+    projectId?: true
+    userId?: true
+  }
+
+  export type QuestionsMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    question?: true
+    answer?: true
+    projectId?: true
+    userId?: true
+  }
+
+  export type QuestionsCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    question?: true
+    answer?: true
+    filesReferences?: true
+    projectId?: true
+    userId?: true
+    _all?: true
+  }
+
+  export type QuestionsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Questions to aggregate.
+     */
+    where?: QuestionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionsOrderByWithRelationInput | QuestionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: QuestionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Questions
+    **/
+    _count?: true | QuestionsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: QuestionsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: QuestionsMaxAggregateInputType
+  }
+
+  export type GetQuestionsAggregateType<T extends QuestionsAggregateArgs> = {
+        [P in keyof T & keyof AggregateQuestions]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateQuestions[P]>
+      : GetScalarType<T[P], AggregateQuestions[P]>
+  }
+
+
+
+
+  export type QuestionsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QuestionsWhereInput
+    orderBy?: QuestionsOrderByWithAggregationInput | QuestionsOrderByWithAggregationInput[]
+    by: QuestionsScalarFieldEnum[] | QuestionsScalarFieldEnum
+    having?: QuestionsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: QuestionsCountAggregateInputType | true
+    _min?: QuestionsMinAggregateInputType
+    _max?: QuestionsMaxAggregateInputType
+  }
+
+  export type QuestionsGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    question: string
+    answer: string
+    filesReferences: JsonValue | null
+    projectId: string
+    userId: string
+    _count: QuestionsCountAggregateOutputType | null
+    _min: QuestionsMinAggregateOutputType | null
+    _max: QuestionsMaxAggregateOutputType | null
+  }
+
+  type GetQuestionsGroupByPayload<T extends QuestionsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<QuestionsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof QuestionsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], QuestionsGroupByOutputType[P]>
+            : GetScalarType<T[P], QuestionsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type QuestionsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    question?: boolean
+    answer?: boolean
+    filesReferences?: boolean
+    projectId?: boolean
+    userId?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["questions"]>
+
+  export type QuestionsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    question?: boolean
+    answer?: boolean
+    filesReferences?: boolean
+    projectId?: boolean
+    userId?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["questions"]>
+
+  export type QuestionsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    question?: boolean
+    answer?: boolean
+    filesReferences?: boolean
+    projectId?: boolean
+    userId?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["questions"]>
+
+  export type QuestionsSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    question?: boolean
+    answer?: boolean
+    filesReferences?: boolean
+    projectId?: boolean
+    userId?: boolean
+  }
+
+  export type QuestionsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "question" | "answer" | "filesReferences" | "projectId" | "userId", ExtArgs["result"]["questions"]>
+  export type QuestionsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type QuestionsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type QuestionsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $QuestionsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Questions"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      updatedAt: Date
+      question: string
+      answer: string
+      filesReferences: Prisma.JsonValue | null
+      projectId: string
+      userId: string
+    }, ExtArgs["result"]["questions"]>
+    composites: {}
+  }
+
+  type QuestionsGetPayload<S extends boolean | null | undefined | QuestionsDefaultArgs> = $Result.GetResult<Prisma.$QuestionsPayload, S>
+
+  type QuestionsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<QuestionsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: QuestionsCountAggregateInputType | true
+    }
+
+  export interface QuestionsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Questions'], meta: { name: 'Questions' } }
+    /**
+     * Find zero or one Questions that matches the filter.
+     * @param {QuestionsFindUniqueArgs} args - Arguments to find a Questions
+     * @example
+     * // Get one Questions
+     * const questions = await prisma.questions.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends QuestionsFindUniqueArgs>(args: SelectSubset<T, QuestionsFindUniqueArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Questions that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {QuestionsFindUniqueOrThrowArgs} args - Arguments to find a Questions
+     * @example
+     * // Get one Questions
+     * const questions = await prisma.questions.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends QuestionsFindUniqueOrThrowArgs>(args: SelectSubset<T, QuestionsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Questions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsFindFirstArgs} args - Arguments to find a Questions
+     * @example
+     * // Get one Questions
+     * const questions = await prisma.questions.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends QuestionsFindFirstArgs>(args?: SelectSubset<T, QuestionsFindFirstArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Questions that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsFindFirstOrThrowArgs} args - Arguments to find a Questions
+     * @example
+     * // Get one Questions
+     * const questions = await prisma.questions.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends QuestionsFindFirstOrThrowArgs>(args?: SelectSubset<T, QuestionsFindFirstOrThrowArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Questions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Questions
+     * const questions = await prisma.questions.findMany()
+     * 
+     * // Get first 10 Questions
+     * const questions = await prisma.questions.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const questionsWithIdOnly = await prisma.questions.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends QuestionsFindManyArgs>(args?: SelectSubset<T, QuestionsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Questions.
+     * @param {QuestionsCreateArgs} args - Arguments to create a Questions.
+     * @example
+     * // Create one Questions
+     * const Questions = await prisma.questions.create({
+     *   data: {
+     *     // ... data to create a Questions
+     *   }
+     * })
+     * 
+     */
+    create<T extends QuestionsCreateArgs>(args: SelectSubset<T, QuestionsCreateArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Questions.
+     * @param {QuestionsCreateManyArgs} args - Arguments to create many Questions.
+     * @example
+     * // Create many Questions
+     * const questions = await prisma.questions.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends QuestionsCreateManyArgs>(args?: SelectSubset<T, QuestionsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Questions and returns the data saved in the database.
+     * @param {QuestionsCreateManyAndReturnArgs} args - Arguments to create many Questions.
+     * @example
+     * // Create many Questions
+     * const questions = await prisma.questions.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Questions and only return the `id`
+     * const questionsWithIdOnly = await prisma.questions.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends QuestionsCreateManyAndReturnArgs>(args?: SelectSubset<T, QuestionsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Questions.
+     * @param {QuestionsDeleteArgs} args - Arguments to delete one Questions.
+     * @example
+     * // Delete one Questions
+     * const Questions = await prisma.questions.delete({
+     *   where: {
+     *     // ... filter to delete one Questions
+     *   }
+     * })
+     * 
+     */
+    delete<T extends QuestionsDeleteArgs>(args: SelectSubset<T, QuestionsDeleteArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Questions.
+     * @param {QuestionsUpdateArgs} args - Arguments to update one Questions.
+     * @example
+     * // Update one Questions
+     * const questions = await prisma.questions.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends QuestionsUpdateArgs>(args: SelectSubset<T, QuestionsUpdateArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Questions.
+     * @param {QuestionsDeleteManyArgs} args - Arguments to filter Questions to delete.
+     * @example
+     * // Delete a few Questions
+     * const { count } = await prisma.questions.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends QuestionsDeleteManyArgs>(args?: SelectSubset<T, QuestionsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Questions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Questions
+     * const questions = await prisma.questions.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends QuestionsUpdateManyArgs>(args: SelectSubset<T, QuestionsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Questions and returns the data updated in the database.
+     * @param {QuestionsUpdateManyAndReturnArgs} args - Arguments to update many Questions.
+     * @example
+     * // Update many Questions
+     * const questions = await prisma.questions.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Questions and only return the `id`
+     * const questionsWithIdOnly = await prisma.questions.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends QuestionsUpdateManyAndReturnArgs>(args: SelectSubset<T, QuestionsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Questions.
+     * @param {QuestionsUpsertArgs} args - Arguments to update or create a Questions.
+     * @example
+     * // Update or create a Questions
+     * const questions = await prisma.questions.upsert({
+     *   create: {
+     *     // ... data to create a Questions
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Questions we want to update
+     *   }
+     * })
+     */
+    upsert<T extends QuestionsUpsertArgs>(args: SelectSubset<T, QuestionsUpsertArgs<ExtArgs>>): Prisma__QuestionsClient<$Result.GetResult<Prisma.$QuestionsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Questions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsCountArgs} args - Arguments to filter Questions to count.
+     * @example
+     * // Count the number of Questions
+     * const count = await prisma.questions.count({
+     *   where: {
+     *     // ... the filter for the Questions we want to count
+     *   }
+     * })
+    **/
+    count<T extends QuestionsCountArgs>(
+      args?: Subset<T, QuestionsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], QuestionsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Questions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends QuestionsAggregateArgs>(args: Subset<T, QuestionsAggregateArgs>): Prisma.PrismaPromise<GetQuestionsAggregateType<T>>
+
+    /**
+     * Group by Questions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuestionsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends QuestionsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: QuestionsGroupByArgs['orderBy'] }
+        : { orderBy?: QuestionsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, QuestionsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetQuestionsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Questions model
+   */
+  readonly fields: QuestionsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Questions.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__QuestionsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Questions model
+   */
+  interface QuestionsFieldRefs {
+    readonly id: FieldRef<"Questions", 'String'>
+    readonly createdAt: FieldRef<"Questions", 'DateTime'>
+    readonly updatedAt: FieldRef<"Questions", 'DateTime'>
+    readonly question: FieldRef<"Questions", 'String'>
+    readonly answer: FieldRef<"Questions", 'String'>
+    readonly filesReferences: FieldRef<"Questions", 'Json'>
+    readonly projectId: FieldRef<"Questions", 'String'>
+    readonly userId: FieldRef<"Questions", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Questions findUnique
+   */
+  export type QuestionsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * Filter, which Questions to fetch.
+     */
+    where: QuestionsWhereUniqueInput
+  }
+
+  /**
+   * Questions findUniqueOrThrow
+   */
+  export type QuestionsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * Filter, which Questions to fetch.
+     */
+    where: QuestionsWhereUniqueInput
+  }
+
+  /**
+   * Questions findFirst
+   */
+  export type QuestionsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * Filter, which Questions to fetch.
+     */
+    where?: QuestionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionsOrderByWithRelationInput | QuestionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Questions.
+     */
+    cursor?: QuestionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Questions.
+     */
+    distinct?: QuestionsScalarFieldEnum | QuestionsScalarFieldEnum[]
+  }
+
+  /**
+   * Questions findFirstOrThrow
+   */
+  export type QuestionsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * Filter, which Questions to fetch.
+     */
+    where?: QuestionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionsOrderByWithRelationInput | QuestionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Questions.
+     */
+    cursor?: QuestionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Questions.
+     */
+    distinct?: QuestionsScalarFieldEnum | QuestionsScalarFieldEnum[]
+  }
+
+  /**
+   * Questions findMany
+   */
+  export type QuestionsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * Filter, which Questions to fetch.
+     */
+    where?: QuestionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Questions to fetch.
+     */
+    orderBy?: QuestionsOrderByWithRelationInput | QuestionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Questions.
+     */
+    cursor?: QuestionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Questions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Questions.
+     */
+    skip?: number
+    distinct?: QuestionsScalarFieldEnum | QuestionsScalarFieldEnum[]
+  }
+
+  /**
+   * Questions create
+   */
+  export type QuestionsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Questions.
+     */
+    data: XOR<QuestionsCreateInput, QuestionsUncheckedCreateInput>
+  }
+
+  /**
+   * Questions createMany
+   */
+  export type QuestionsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Questions.
+     */
+    data: QuestionsCreateManyInput | QuestionsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Questions createManyAndReturn
+   */
+  export type QuestionsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * The data used to create many Questions.
+     */
+    data: QuestionsCreateManyInput | QuestionsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Questions update
+   */
+  export type QuestionsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Questions.
+     */
+    data: XOR<QuestionsUpdateInput, QuestionsUncheckedUpdateInput>
+    /**
+     * Choose, which Questions to update.
+     */
+    where: QuestionsWhereUniqueInput
+  }
+
+  /**
+   * Questions updateMany
+   */
+  export type QuestionsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Questions.
+     */
+    data: XOR<QuestionsUpdateManyMutationInput, QuestionsUncheckedUpdateManyInput>
+    /**
+     * Filter which Questions to update
+     */
+    where?: QuestionsWhereInput
+    /**
+     * Limit how many Questions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Questions updateManyAndReturn
+   */
+  export type QuestionsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * The data used to update Questions.
+     */
+    data: XOR<QuestionsUpdateManyMutationInput, QuestionsUncheckedUpdateManyInput>
+    /**
+     * Filter which Questions to update
+     */
+    where?: QuestionsWhereInput
+    /**
+     * Limit how many Questions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Questions upsert
+   */
+  export type QuestionsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Questions to update in case it exists.
+     */
+    where: QuestionsWhereUniqueInput
+    /**
+     * In case the Questions found by the `where` argument doesn't exist, create a new Questions with this data.
+     */
+    create: XOR<QuestionsCreateInput, QuestionsUncheckedCreateInput>
+    /**
+     * In case the Questions was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<QuestionsUpdateInput, QuestionsUncheckedUpdateInput>
+  }
+
+  /**
+   * Questions delete
+   */
+  export type QuestionsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+    /**
+     * Filter which Questions to delete.
+     */
+    where: QuestionsWhereUniqueInput
+  }
+
+  /**
+   * Questions deleteMany
+   */
+  export type QuestionsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Questions to delete
+     */
+    where?: QuestionsWhereInput
+    /**
+     * Limit how many Questions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Questions without action
+   */
+  export type QuestionsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Questions
+     */
+    select?: QuestionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Questions
+     */
+    omit?: QuestionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuestionsInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6939,12 +8205,34 @@ export namespace Prisma {
   export type SourceCodeEmbeddingScalarFieldEnum = (typeof SourceCodeEmbeddingScalarFieldEnum)[keyof typeof SourceCodeEmbeddingScalarFieldEnum]
 
 
+  export const QuestionsScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    question: 'question',
+    answer: 'answer',
+    filesReferences: 'filesReferences',
+    projectId: 'projectId',
+    userId: 'userId'
+  };
+
+  export type QuestionsScalarFieldEnum = (typeof QuestionsScalarFieldEnum)[keyof typeof QuestionsScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -6961,6 +8249,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -7011,6 +8308,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -7040,6 +8351,7 @@ export namespace Prisma {
     emailAddresses?: StringFilter<"User"> | string
     credits?: IntFilter<"User"> | number
     userToProjects?: UserToProjectListRelationFilter
+    questionsAsked?: QuestionsListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7052,6 +8364,7 @@ export namespace Prisma {
     emailAddresses?: SortOrder
     credits?: SortOrder
     userToProjects?: UserToProjectOrderByRelationAggregateInput
+    questionsAsked?: QuestionsOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7067,6 +8380,7 @@ export namespace Prisma {
     lastName?: StringNullableFilter<"User"> | string | null
     credits?: IntFilter<"User"> | number
     userToProjects?: UserToProjectListRelationFilter
+    questionsAsked?: QuestionsListRelationFilter
   }, "id" | "emailAddresses">
 
   export type UserOrderByWithAggregationInput = {
@@ -7112,6 +8426,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectListRelationFilter
     commits?: CommitListRelationFilter
     sourceCodeEmbeddings?: SourceCodeEmbeddingListRelationFilter
+    savedQuestions?: QuestionsListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -7124,6 +8439,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectOrderByRelationAggregateInput
     commits?: CommitOrderByRelationAggregateInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingOrderByRelationAggregateInput
+    savedQuestions?: QuestionsOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -7139,6 +8455,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectListRelationFilter
     commits?: CommitListRelationFilter
     sourceCodeEmbeddings?: SourceCodeEmbeddingListRelationFilter
+    savedQuestions?: QuestionsListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -7369,6 +8686,79 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"SourceCodeEmbedding"> | string
   }
 
+  export type QuestionsWhereInput = {
+    AND?: QuestionsWhereInput | QuestionsWhereInput[]
+    OR?: QuestionsWhereInput[]
+    NOT?: QuestionsWhereInput | QuestionsWhereInput[]
+    id?: StringFilter<"Questions"> | string
+    createdAt?: DateTimeFilter<"Questions"> | Date | string
+    updatedAt?: DateTimeFilter<"Questions"> | Date | string
+    question?: StringFilter<"Questions"> | string
+    answer?: StringFilter<"Questions"> | string
+    filesReferences?: JsonNullableFilter<"Questions">
+    projectId?: StringFilter<"Questions"> | string
+    userId?: StringFilter<"Questions"> | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type QuestionsOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    filesReferences?: SortOrderInput | SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type QuestionsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: QuestionsWhereInput | QuestionsWhereInput[]
+    OR?: QuestionsWhereInput[]
+    NOT?: QuestionsWhereInput | QuestionsWhereInput[]
+    createdAt?: DateTimeFilter<"Questions"> | Date | string
+    updatedAt?: DateTimeFilter<"Questions"> | Date | string
+    question?: StringFilter<"Questions"> | string
+    answer?: StringFilter<"Questions"> | string
+    filesReferences?: JsonNullableFilter<"Questions">
+    projectId?: StringFilter<"Questions"> | string
+    userId?: StringFilter<"Questions"> | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type QuestionsOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    filesReferences?: SortOrderInput | SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    _count?: QuestionsCountOrderByAggregateInput
+    _max?: QuestionsMaxOrderByAggregateInput
+    _min?: QuestionsMinOrderByAggregateInput
+  }
+
+  export type QuestionsScalarWhereWithAggregatesInput = {
+    AND?: QuestionsScalarWhereWithAggregatesInput | QuestionsScalarWhereWithAggregatesInput[]
+    OR?: QuestionsScalarWhereWithAggregatesInput[]
+    NOT?: QuestionsScalarWhereWithAggregatesInput | QuestionsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Questions"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Questions"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Questions"> | Date | string
+    question?: StringWithAggregatesFilter<"Questions"> | string
+    answer?: StringWithAggregatesFilter<"Questions"> | string
+    filesReferences?: JsonNullableWithAggregatesFilter<"Questions">
+    projectId?: StringWithAggregatesFilter<"Questions"> | string
+    userId?: StringWithAggregatesFilter<"Questions"> | string
+  }
+
   export type UserCreateInput = {
     id?: string
     createdAt?: Date | string
@@ -7379,6 +8769,7 @@ export namespace Prisma {
     emailAddresses: string
     credits?: number
     userToProjects?: UserToProjectCreateNestedManyWithoutUserInput
+    questionsAsked?: QuestionsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7391,6 +8782,7 @@ export namespace Prisma {
     emailAddresses: string
     credits?: number
     userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutUserInput
+    questionsAsked?: QuestionsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -7403,6 +8795,7 @@ export namespace Prisma {
     emailAddresses?: StringFieldUpdateOperationsInput | string
     credits?: IntFieldUpdateOperationsInput | number
     userToProjects?: UserToProjectUpdateManyWithoutUserNestedInput
+    questionsAsked?: QuestionsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7415,6 +8808,7 @@ export namespace Prisma {
     emailAddresses?: StringFieldUpdateOperationsInput | string
     credits?: IntFieldUpdateOperationsInput | number
     userToProjects?: UserToProjectUncheckedUpdateManyWithoutUserNestedInput
+    questionsAsked?: QuestionsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7460,6 +8854,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectCreateNestedManyWithoutProjectInput
     commits?: CommitCreateNestedManyWithoutProjectInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -7472,6 +8867,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutProjectInput
     commits?: CommitUncheckedCreateNestedManyWithoutProjectInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -7484,6 +8880,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectUpdateManyWithoutProjectNestedInput
     commits?: CommitUpdateManyWithoutProjectNestedInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -7496,6 +8893,7 @@ export namespace Prisma {
     userToProjects?: UserToProjectUncheckedUpdateManyWithoutProjectNestedInput
     commits?: CommitUncheckedUpdateManyWithoutProjectNestedInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -7738,6 +9136,81 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type QuestionsCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    project: ProjectCreateNestedOneWithoutSavedQuestionsInput
+    user: UserCreateNestedOneWithoutQuestionsAskedInput
+  }
+
+  export type QuestionsUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    projectId: string
+    userId: string
+  }
+
+  export type QuestionsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    project?: ProjectUpdateOneRequiredWithoutSavedQuestionsNestedInput
+    user?: UserUpdateOneRequiredWithoutQuestionsAskedNestedInput
+  }
+
+  export type QuestionsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type QuestionsCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    projectId: string
+    userId: string
+  }
+
+  export type QuestionsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type QuestionsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -7796,12 +9269,22 @@ export namespace Prisma {
     none?: UserToProjectWhereInput
   }
 
+  export type QuestionsListRelationFilter = {
+    every?: QuestionsWhereInput
+    some?: QuestionsWhereInput
+    none?: QuestionsWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
   }
 
   export type UserToProjectOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type QuestionsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8091,6 +9574,86 @@ export namespace Prisma {
     summary?: SortOrder
     projectId?: SortOrder
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type QuestionsCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    filesReferences?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type QuestionsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type QuestionsMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
 
   export type UserToProjectCreateNestedManyWithoutUserInput = {
     create?: XOR<UserToProjectCreateWithoutUserInput, UserToProjectUncheckedCreateWithoutUserInput> | UserToProjectCreateWithoutUserInput[] | UserToProjectUncheckedCreateWithoutUserInput[]
@@ -8099,11 +9662,25 @@ export namespace Prisma {
     connect?: UserToProjectWhereUniqueInput | UserToProjectWhereUniqueInput[]
   }
 
+  export type QuestionsCreateNestedManyWithoutUserInput = {
+    create?: XOR<QuestionsCreateWithoutUserInput, QuestionsUncheckedCreateWithoutUserInput> | QuestionsCreateWithoutUserInput[] | QuestionsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutUserInput | QuestionsCreateOrConnectWithoutUserInput[]
+    createMany?: QuestionsCreateManyUserInputEnvelope
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+  }
+
   export type UserToProjectUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserToProjectCreateWithoutUserInput, UserToProjectUncheckedCreateWithoutUserInput> | UserToProjectCreateWithoutUserInput[] | UserToProjectUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutUserInput | UserToProjectCreateOrConnectWithoutUserInput[]
     createMany?: UserToProjectCreateManyUserInputEnvelope
     connect?: UserToProjectWhereUniqueInput | UserToProjectWhereUniqueInput[]
+  }
+
+  export type QuestionsUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<QuestionsCreateWithoutUserInput, QuestionsUncheckedCreateWithoutUserInput> | QuestionsCreateWithoutUserInput[] | QuestionsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutUserInput | QuestionsCreateOrConnectWithoutUserInput[]
+    createMany?: QuestionsCreateManyUserInputEnvelope
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8140,6 +9717,20 @@ export namespace Prisma {
     deleteMany?: UserToProjectScalarWhereInput | UserToProjectScalarWhereInput[]
   }
 
+  export type QuestionsUpdateManyWithoutUserNestedInput = {
+    create?: XOR<QuestionsCreateWithoutUserInput, QuestionsUncheckedCreateWithoutUserInput> | QuestionsCreateWithoutUserInput[] | QuestionsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutUserInput | QuestionsCreateOrConnectWithoutUserInput[]
+    upsert?: QuestionsUpsertWithWhereUniqueWithoutUserInput | QuestionsUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: QuestionsCreateManyUserInputEnvelope
+    set?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    disconnect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    delete?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    update?: QuestionsUpdateWithWhereUniqueWithoutUserInput | QuestionsUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: QuestionsUpdateManyWithWhereWithoutUserInput | QuestionsUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: QuestionsScalarWhereInput | QuestionsScalarWhereInput[]
+  }
+
   export type UserToProjectUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserToProjectCreateWithoutUserInput, UserToProjectUncheckedCreateWithoutUserInput> | UserToProjectCreateWithoutUserInput[] | UserToProjectUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutUserInput | UserToProjectCreateOrConnectWithoutUserInput[]
@@ -8152,6 +9743,20 @@ export namespace Prisma {
     update?: UserToProjectUpdateWithWhereUniqueWithoutUserInput | UserToProjectUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserToProjectUpdateManyWithWhereWithoutUserInput | UserToProjectUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserToProjectScalarWhereInput | UserToProjectScalarWhereInput[]
+  }
+
+  export type QuestionsUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<QuestionsCreateWithoutUserInput, QuestionsUncheckedCreateWithoutUserInput> | QuestionsCreateWithoutUserInput[] | QuestionsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutUserInput | QuestionsCreateOrConnectWithoutUserInput[]
+    upsert?: QuestionsUpsertWithWhereUniqueWithoutUserInput | QuestionsUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: QuestionsCreateManyUserInputEnvelope
+    set?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    disconnect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    delete?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    update?: QuestionsUpdateWithWhereUniqueWithoutUserInput | QuestionsUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: QuestionsUpdateManyWithWhereWithoutUserInput | QuestionsUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: QuestionsScalarWhereInput | QuestionsScalarWhereInput[]
   }
 
   export type UserToProjectCreateNestedManyWithoutProjectInput = {
@@ -8175,6 +9780,13 @@ export namespace Prisma {
     connect?: SourceCodeEmbeddingWhereUniqueInput | SourceCodeEmbeddingWhereUniqueInput[]
   }
 
+  export type QuestionsCreateNestedManyWithoutProjectInput = {
+    create?: XOR<QuestionsCreateWithoutProjectInput, QuestionsUncheckedCreateWithoutProjectInput> | QuestionsCreateWithoutProjectInput[] | QuestionsUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutProjectInput | QuestionsCreateOrConnectWithoutProjectInput[]
+    createMany?: QuestionsCreateManyProjectInputEnvelope
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+  }
+
   export type UserToProjectUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<UserToProjectCreateWithoutProjectInput, UserToProjectUncheckedCreateWithoutProjectInput> | UserToProjectCreateWithoutProjectInput[] | UserToProjectUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutProjectInput | UserToProjectCreateOrConnectWithoutProjectInput[]
@@ -8194,6 +9806,13 @@ export namespace Prisma {
     connectOrCreate?: SourceCodeEmbeddingCreateOrConnectWithoutProjectInput | SourceCodeEmbeddingCreateOrConnectWithoutProjectInput[]
     createMany?: SourceCodeEmbeddingCreateManyProjectInputEnvelope
     connect?: SourceCodeEmbeddingWhereUniqueInput | SourceCodeEmbeddingWhereUniqueInput[]
+  }
+
+  export type QuestionsUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<QuestionsCreateWithoutProjectInput, QuestionsUncheckedCreateWithoutProjectInput> | QuestionsCreateWithoutProjectInput[] | QuestionsUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutProjectInput | QuestionsCreateOrConnectWithoutProjectInput[]
+    createMany?: QuestionsCreateManyProjectInputEnvelope
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -8242,6 +9861,20 @@ export namespace Prisma {
     deleteMany?: SourceCodeEmbeddingScalarWhereInput | SourceCodeEmbeddingScalarWhereInput[]
   }
 
+  export type QuestionsUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<QuestionsCreateWithoutProjectInput, QuestionsUncheckedCreateWithoutProjectInput> | QuestionsCreateWithoutProjectInput[] | QuestionsUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutProjectInput | QuestionsCreateOrConnectWithoutProjectInput[]
+    upsert?: QuestionsUpsertWithWhereUniqueWithoutProjectInput | QuestionsUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: QuestionsCreateManyProjectInputEnvelope
+    set?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    disconnect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    delete?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    update?: QuestionsUpdateWithWhereUniqueWithoutProjectInput | QuestionsUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: QuestionsUpdateManyWithWhereWithoutProjectInput | QuestionsUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: QuestionsScalarWhereInput | QuestionsScalarWhereInput[]
+  }
+
   export type UserToProjectUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<UserToProjectCreateWithoutProjectInput, UserToProjectUncheckedCreateWithoutProjectInput> | UserToProjectCreateWithoutProjectInput[] | UserToProjectUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: UserToProjectCreateOrConnectWithoutProjectInput | UserToProjectCreateOrConnectWithoutProjectInput[]
@@ -8282,6 +9915,20 @@ export namespace Prisma {
     update?: SourceCodeEmbeddingUpdateWithWhereUniqueWithoutProjectInput | SourceCodeEmbeddingUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: SourceCodeEmbeddingUpdateManyWithWhereWithoutProjectInput | SourceCodeEmbeddingUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: SourceCodeEmbeddingScalarWhereInput | SourceCodeEmbeddingScalarWhereInput[]
+  }
+
+  export type QuestionsUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<QuestionsCreateWithoutProjectInput, QuestionsUncheckedCreateWithoutProjectInput> | QuestionsCreateWithoutProjectInput[] | QuestionsUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: QuestionsCreateOrConnectWithoutProjectInput | QuestionsCreateOrConnectWithoutProjectInput[]
+    upsert?: QuestionsUpsertWithWhereUniqueWithoutProjectInput | QuestionsUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: QuestionsCreateManyProjectInputEnvelope
+    set?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    disconnect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    delete?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    connect?: QuestionsWhereUniqueInput | QuestionsWhereUniqueInput[]
+    update?: QuestionsUpdateWithWhereUniqueWithoutProjectInput | QuestionsUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: QuestionsUpdateManyWithWhereWithoutProjectInput | QuestionsUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: QuestionsScalarWhereInput | QuestionsScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutUserToProjectsInput = {
@@ -8338,6 +9985,34 @@ export namespace Prisma {
     upsert?: ProjectUpsertWithoutSourceCodeEmbeddingsInput
     connect?: ProjectWhereUniqueInput
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutSourceCodeEmbeddingsInput, ProjectUpdateWithoutSourceCodeEmbeddingsInput>, ProjectUncheckedUpdateWithoutSourceCodeEmbeddingsInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutSavedQuestionsInput = {
+    create?: XOR<ProjectCreateWithoutSavedQuestionsInput, ProjectUncheckedCreateWithoutSavedQuestionsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutSavedQuestionsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutQuestionsAskedInput = {
+    create?: XOR<UserCreateWithoutQuestionsAskedInput, UserUncheckedCreateWithoutQuestionsAskedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutQuestionsAskedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutSavedQuestionsNestedInput = {
+    create?: XOR<ProjectCreateWithoutSavedQuestionsInput, ProjectUncheckedCreateWithoutSavedQuestionsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutSavedQuestionsInput
+    upsert?: ProjectUpsertWithoutSavedQuestionsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutSavedQuestionsInput, ProjectUpdateWithoutSavedQuestionsInput>, ProjectUncheckedUpdateWithoutSavedQuestionsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutQuestionsAskedNestedInput = {
+    create?: XOR<UserCreateWithoutQuestionsAskedInput, UserUncheckedCreateWithoutQuestionsAskedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutQuestionsAskedInput
+    upsert?: UserUpsertWithoutQuestionsAskedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutQuestionsAskedInput, UserUpdateWithoutQuestionsAskedInput>, UserUncheckedUpdateWithoutQuestionsAskedInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8500,6 +10175,29 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UserToProjectCreateWithoutUserInput = {
     id?: string
@@ -8522,6 +10220,36 @@ export namespace Prisma {
 
   export type UserToProjectCreateManyUserInputEnvelope = {
     data: UserToProjectCreateManyUserInput | UserToProjectCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type QuestionsCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    project: ProjectCreateNestedOneWithoutSavedQuestionsInput
+  }
+
+  export type QuestionsUncheckedCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    projectId: string
+  }
+
+  export type QuestionsCreateOrConnectWithoutUserInput = {
+    where: QuestionsWhereUniqueInput
+    create: XOR<QuestionsCreateWithoutUserInput, QuestionsUncheckedCreateWithoutUserInput>
+  }
+
+  export type QuestionsCreateManyUserInputEnvelope = {
+    data: QuestionsCreateManyUserInput | QuestionsCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -8550,6 +10278,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserToProject"> | Date | string
     userId?: StringFilter<"UserToProject"> | string
     projectId?: StringFilter<"UserToProject"> | string
+  }
+
+  export type QuestionsUpsertWithWhereUniqueWithoutUserInput = {
+    where: QuestionsWhereUniqueInput
+    update: XOR<QuestionsUpdateWithoutUserInput, QuestionsUncheckedUpdateWithoutUserInput>
+    create: XOR<QuestionsCreateWithoutUserInput, QuestionsUncheckedCreateWithoutUserInput>
+  }
+
+  export type QuestionsUpdateWithWhereUniqueWithoutUserInput = {
+    where: QuestionsWhereUniqueInput
+    data: XOR<QuestionsUpdateWithoutUserInput, QuestionsUncheckedUpdateWithoutUserInput>
+  }
+
+  export type QuestionsUpdateManyWithWhereWithoutUserInput = {
+    where: QuestionsScalarWhereInput
+    data: XOR<QuestionsUpdateManyMutationInput, QuestionsUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type QuestionsScalarWhereInput = {
+    AND?: QuestionsScalarWhereInput | QuestionsScalarWhereInput[]
+    OR?: QuestionsScalarWhereInput[]
+    NOT?: QuestionsScalarWhereInput | QuestionsScalarWhereInput[]
+    id?: StringFilter<"Questions"> | string
+    createdAt?: DateTimeFilter<"Questions"> | Date | string
+    updatedAt?: DateTimeFilter<"Questions"> | Date | string
+    question?: StringFilter<"Questions"> | string
+    answer?: StringFilter<"Questions"> | string
+    filesReferences?: JsonNullableFilter<"Questions">
+    projectId?: StringFilter<"Questions"> | string
+    userId?: StringFilter<"Questions"> | string
   }
 
   export type UserToProjectCreateWithoutProjectInput = {
@@ -8638,6 +10396,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type QuestionsCreateWithoutProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    user: UserCreateNestedOneWithoutQuestionsAskedInput
+  }
+
+  export type QuestionsUncheckedCreateWithoutProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    userId: string
+  }
+
+  export type QuestionsCreateOrConnectWithoutProjectInput = {
+    where: QuestionsWhereUniqueInput
+    create: XOR<QuestionsCreateWithoutProjectInput, QuestionsUncheckedCreateWithoutProjectInput>
+  }
+
+  export type QuestionsCreateManyProjectInputEnvelope = {
+    data: QuestionsCreateManyProjectInput | QuestionsCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserToProjectUpsertWithWhereUniqueWithoutProjectInput = {
     where: UserToProjectWhereUniqueInput
     update: XOR<UserToProjectUpdateWithoutProjectInput, UserToProjectUncheckedUpdateWithoutProjectInput>
@@ -8715,6 +10503,22 @@ export namespace Prisma {
     projectId?: StringFilter<"SourceCodeEmbedding"> | string
   }
 
+  export type QuestionsUpsertWithWhereUniqueWithoutProjectInput = {
+    where: QuestionsWhereUniqueInput
+    update: XOR<QuestionsUpdateWithoutProjectInput, QuestionsUncheckedUpdateWithoutProjectInput>
+    create: XOR<QuestionsCreateWithoutProjectInput, QuestionsUncheckedCreateWithoutProjectInput>
+  }
+
+  export type QuestionsUpdateWithWhereUniqueWithoutProjectInput = {
+    where: QuestionsWhereUniqueInput
+    data: XOR<QuestionsUpdateWithoutProjectInput, QuestionsUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type QuestionsUpdateManyWithWhereWithoutProjectInput = {
+    where: QuestionsScalarWhereInput
+    data: XOR<QuestionsUpdateManyMutationInput, QuestionsUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type UserCreateWithoutUserToProjectsInput = {
     id?: string
     createdAt?: Date | string
@@ -8724,6 +10528,7 @@ export namespace Prisma {
     lastName?: string | null
     emailAddresses: string
     credits?: number
+    questionsAsked?: QuestionsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserToProjectsInput = {
@@ -8735,6 +10540,7 @@ export namespace Prisma {
     lastName?: string | null
     emailAddresses: string
     credits?: number
+    questionsAsked?: QuestionsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserToProjectsInput = {
@@ -8751,6 +10557,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     commits?: CommitCreateNestedManyWithoutProjectInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutUserToProjectsInput = {
@@ -8762,6 +10569,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     commits?: CommitUncheckedCreateNestedManyWithoutProjectInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutUserToProjectsInput = {
@@ -8789,6 +10597,7 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     emailAddresses?: StringFieldUpdateOperationsInput | string
     credits?: IntFieldUpdateOperationsInput | number
+    questionsAsked?: QuestionsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserToProjectsInput = {
@@ -8800,6 +10609,7 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     emailAddresses?: StringFieldUpdateOperationsInput | string
     credits?: IntFieldUpdateOperationsInput | number
+    questionsAsked?: QuestionsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProjectUpsertWithoutUserToProjectsInput = {
@@ -8822,6 +10632,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     commits?: CommitUpdateManyWithoutProjectNestedInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutUserToProjectsInput = {
@@ -8833,6 +10644,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     commits?: CommitUncheckedUpdateManyWithoutProjectNestedInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutCommitsInput = {
@@ -8844,6 +10656,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     userToProjects?: UserToProjectCreateNestedManyWithoutProjectInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCommitsInput = {
@@ -8855,6 +10668,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutProjectInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCommitsInput = {
@@ -8882,6 +10696,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userToProjects?: UserToProjectUpdateManyWithoutProjectNestedInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCommitsInput = {
@@ -8893,6 +10708,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userToProjects?: UserToProjectUncheckedUpdateManyWithoutProjectNestedInput
     sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutSourceCodeEmbeddingsInput = {
@@ -8904,6 +10720,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     userToProjects?: UserToProjectCreateNestedManyWithoutProjectInput
     commits?: CommitCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutSourceCodeEmbeddingsInput = {
@@ -8915,6 +10732,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutProjectInput
     commits?: CommitUncheckedCreateNestedManyWithoutProjectInput
+    savedQuestions?: QuestionsUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutSourceCodeEmbeddingsInput = {
@@ -8942,6 +10760,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userToProjects?: UserToProjectUpdateManyWithoutProjectNestedInput
     commits?: CommitUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutSourceCodeEmbeddingsInput = {
@@ -8953,12 +10772,151 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userToProjects?: UserToProjectUncheckedUpdateManyWithoutProjectNestedInput
     commits?: CommitUncheckedUpdateManyWithoutProjectNestedInput
+    savedQuestions?: QuestionsUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectCreateWithoutSavedQuestionsInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    githubUrl: string
+    deletedAt?: Date | string | null
+    userToProjects?: UserToProjectCreateNestedManyWithoutProjectInput
+    commits?: CommitCreateNestedManyWithoutProjectInput
+    sourceCodeEmbeddings?: SourceCodeEmbeddingCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutSavedQuestionsInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    name: string
+    githubUrl: string
+    deletedAt?: Date | string | null
+    userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutProjectInput
+    commits?: CommitUncheckedCreateNestedManyWithoutProjectInput
+    sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutSavedQuestionsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutSavedQuestionsInput, ProjectUncheckedCreateWithoutSavedQuestionsInput>
+  }
+
+  export type UserCreateWithoutQuestionsAskedInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    imageUrl?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    emailAddresses: string
+    credits?: number
+    userToProjects?: UserToProjectCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutQuestionsAskedInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    imageUrl?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    emailAddresses: string
+    credits?: number
+    userToProjects?: UserToProjectUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutQuestionsAskedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutQuestionsAskedInput, UserUncheckedCreateWithoutQuestionsAskedInput>
+  }
+
+  export type ProjectUpsertWithoutSavedQuestionsInput = {
+    update: XOR<ProjectUpdateWithoutSavedQuestionsInput, ProjectUncheckedUpdateWithoutSavedQuestionsInput>
+    create: XOR<ProjectCreateWithoutSavedQuestionsInput, ProjectUncheckedCreateWithoutSavedQuestionsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutSavedQuestionsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutSavedQuestionsInput, ProjectUncheckedUpdateWithoutSavedQuestionsInput>
+  }
+
+  export type ProjectUpdateWithoutSavedQuestionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    githubUrl?: StringFieldUpdateOperationsInput | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userToProjects?: UserToProjectUpdateManyWithoutProjectNestedInput
+    commits?: CommitUpdateManyWithoutProjectNestedInput
+    sourceCodeEmbeddings?: SourceCodeEmbeddingUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutSavedQuestionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    githubUrl?: StringFieldUpdateOperationsInput | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userToProjects?: UserToProjectUncheckedUpdateManyWithoutProjectNestedInput
+    commits?: CommitUncheckedUpdateManyWithoutProjectNestedInput
+    sourceCodeEmbeddings?: SourceCodeEmbeddingUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutQuestionsAskedInput = {
+    update: XOR<UserUpdateWithoutQuestionsAskedInput, UserUncheckedUpdateWithoutQuestionsAskedInput>
+    create: XOR<UserCreateWithoutQuestionsAskedInput, UserUncheckedCreateWithoutQuestionsAskedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutQuestionsAskedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutQuestionsAskedInput, UserUncheckedUpdateWithoutQuestionsAskedInput>
+  }
+
+  export type UserUpdateWithoutQuestionsAskedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailAddresses?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    userToProjects?: UserToProjectUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutQuestionsAskedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    emailAddresses?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    userToProjects?: UserToProjectUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserToProjectCreateManyUserInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    projectId: string
+  }
+
+  export type QuestionsCreateManyUserInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
     projectId: string
   }
 
@@ -8980,6 +10938,36 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type QuestionsUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    project?: ProjectUpdateOneRequiredWithoutSavedQuestionsNestedInput
+  }
+
+  export type QuestionsUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type QuestionsUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
     projectId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -9009,6 +10997,16 @@ export namespace Prisma {
     sourceCode: string
     fileName: string
     summary: string
+  }
+
+  export type QuestionsCreateManyProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    question: string
+    answer: string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    userId: string
   }
 
   export type UserToProjectUpdateWithoutProjectInput = {
@@ -9093,6 +11091,36 @@ export namespace Prisma {
     sourceCode?: StringFieldUpdateOperationsInput | string
     fileName?: StringFieldUpdateOperationsInput | string
     summary?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type QuestionsUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    user?: UserUpdateOneRequiredWithoutQuestionsAskedNestedInput
+  }
+
+  export type QuestionsUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type QuestionsUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    filesReferences?: NullableJsonNullValueInput | InputJsonValue
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
 
