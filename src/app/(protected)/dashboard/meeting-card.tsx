@@ -12,10 +12,12 @@ import { useProjects } from "@/hooks/use-projects"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
+import useRefetch from '@/hooks/use-refetch'
 import axios from "axios"
 
 export default function MeetingCard() {
     const { project } = useProjects()
+    const refetch = useRefetch()
     const processMeeting = useMutation({
         mutationFn: async (data: {meetingUrl: string, meetingId: string, projectId: string }) => {
             const response = await axios.post('/api/process-meeting', {
@@ -56,6 +58,7 @@ export default function MeetingCard() {
                 onSuccess: (meeting) => {
                     toast.success("Meeting uploaded successfully")
                     router.push(`/meetings`)
+                    refetch()
                     processMeeting.mutateAsync({
                         meetingUrl: downloadURL,
                         meetingId: meeting.id,
