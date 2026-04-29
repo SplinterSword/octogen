@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
                 headline: summary.headline,
                 summary: summary.summary,
                 meetingId,
-                projectId,
             })),
         })
         await db.meeting.update({
