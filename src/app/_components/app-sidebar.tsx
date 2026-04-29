@@ -21,8 +21,8 @@ const items = [
         icon: Bot,
     },
     {
-        title: "Messages",
-        url: "/messages",
+        title: "Meetings",
+        url: "/meetings",
         icon: Presentation,
     },
     {
