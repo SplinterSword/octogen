@@ -16,7 +16,7 @@ export const projectRouter = createTRPCRouter({
                 id: ctx.user.userId!,
             },
             select: {
-                credits:true
+                credits: true
             }
         })
         
