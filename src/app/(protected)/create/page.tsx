@@ -78,8 +78,8 @@ const CreatePage = () => {
                             </div>
                         )}
 
-                        <button type='submit' disabled={createProject.isPending || checkCredits.isPending || !hasEnoughCredits} className={cn('bg-primary text-primary-foreground px-4 py-2 rounded-md', createProject.isPending && 'opacity-50 cursor-not-allowed')}>
-                            {!!checkCredits.data ? 'Create Project' : 'Checking credits...'}
+                        <button type='submit' disabled={createProject.isPending || checkCredits.isPending || !hasEnoughCredits} className={cn('bg-primary text-primary-foreground px-4 py-2 rounded-md cursor-pointer', createProject.isPending || checkCredits.isPending && 'opacity-50 cursor-not-allowed')}>
+                            {!!checkCredits.data ? 'Create Project' : 'Check credits'}
                         </button>
                     </form>
                 </div>
