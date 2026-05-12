@@ -6,6 +6,7 @@ import { api } from '@/trpc/react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import useRefetch from '@/hooks/use-refetch'
+import { Info } from 'lucide-react'
 
 type FormInput = {
     repoUrl: string
@@ -14,26 +15,36 @@ type FormInput = {
 }
 
 const CreatePage = () => {
-    const {register, handleSubmit, reset} = useForm<FormInput>()
+    const { register, handleSubmit, reset } = useForm<FormInput>()
     const createProject = api.project.create.useMutation()
+    const checkCredits = api.project.checkCredits.useMutation()
     const refetch = useRefetch()
 
     const onSubmit = (data: FormInput) => {
-        createProject.mutate({
-            name: data.projectName,
-            githubUrl: data.repoUrl,
-            githubToken: data.githubToken
-        },{
-            onSuccess: () => {
-                toast.success('Project created successfully')
-                reset()
-                refetch()
-            },
-            onError: (error) => {
-                toast.error(error.message)
-            }
-        })
+        if (!!checkCredits.data) {
+            createProject.mutate({
+                name: data.projectName,
+                githubUrl: data.repoUrl,
+                githubToken: data.githubToken
+            }, {
+                onSuccess: () => {
+                    toast.success('Project created successfully')
+                    reset()
+                    refetch()
+                },
+                onError: (error) => {
+                    toast.error(error.message)
+                }
+            })
+        } else {
+            checkCredits.mutate({
+                githubUrl: data.repoUrl,
+                githubToken: data.githubToken
+            })
+        }
     }
+
+    const hasEnoughCredits = checkCredits.data?.userCredits ? checkCredits.data.userCredits >= checkCredits.data.fileCount : true
 
     return (
         <div className='flex items-center gap-12 h-full justify-center'>
@@ -50,14 +61,25 @@ const CreatePage = () => {
                 <div className='h-4'></div>
                 <div>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <Input {...register('projectName', {required: true})} placeholder='Project Name' />
+                        <Input {...register('projectName', { required: true })} placeholder='Project Name' />
                         <div className='h-2'></div>
-                        <Input {...register('repoUrl', {required: true})} placeholder='Github Repository URL' />
+                        <Input {...register('repoUrl', { required: true })} placeholder='Github Repository URL' />
                         <div className='h-2'></div>
                         <Input {...register('githubToken')} placeholder='Github Token (optional)' />
                         <div className='h-4'></div>
-                        <button type='submit' disabled={createProject.isPending} className={cn('bg-primary text-primary-foreground px-4 py-2 rounded-md', createProject.isPending && 'opacity-50 cursor-not-allowed')}>
-                            Create Project
+
+                        {!!checkCredits.data && (
+                            <div className='my-4 bg-orange-50 px-4 py-2 rounded-md border border-orange-200 text-orange-700'>
+                                <div className="flex items-center gap-2">
+                                    <Info className='size-4' />
+                                    <p className="text-sm">You will be charged <strong>{checkCredits.data.fileCount}</strong> credits for this repository</p>
+                                </div>
+                                <p className="text-sm text-blue-600 ml-6">You have <strong>{checkCredits.data.userCredits}</strong> credits remaining.</p>
+                            </div>
+                        )}
+
+                        <button type='submit' disabled={createProject.isPending || checkCredits.isPending || !hasEnoughCredits} className={cn('bg-primary text-primary-foreground px-4 py-2 rounded-md', createProject.isPending && 'opacity-50 cursor-not-allowed')}>
+                            {!!checkCredits.data ? 'Create Project' : 'Checking credits...'}
                         </button>
                     </form>
                 </div>
