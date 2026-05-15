@@ -2,6 +2,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { UserButton } from "@clerk/nextjs";
 import { AppSidebar } from "../_components/app-sidebar";
+import { ProjectNav } from "./_components/project-nav";
 
 type Props = {
     children: React.ReactNode;
@@ -23,6 +24,7 @@ const SidebarLayout = ({ children }: Props) => {
                     {children}
                 </div>
             </main>
+            <ProjectNav />
         </SidebarProvider>
     )
 }

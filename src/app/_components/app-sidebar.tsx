@@ -1,7 +1,7 @@
 'use client'
 
 import { Sidebar, SidebarContent, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenuItem, SidebarMenuButton, SidebarMenu } from "@/components/ui/sidebar"
-import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from "lucide-react"
+import { CreditCard, Plus } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
@@ -10,21 +10,6 @@ import { useSidebar } from "@/components/ui/sidebar"
 import { useProjects } from "@/hooks/use-projects"
 
 const items = [
-    {
-        title: "Dashboard",
-        url: "/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "Q&A",
-        url: "/qa",
-        icon: Bot,
-    },
-    {
-        title: "Meetings",
-        url: "/meetings",
-        icon: Presentation,
-    },
     {
         title: "Billing",
         url: "/billing",
