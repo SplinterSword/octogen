@@ -3,6 +3,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { UserButton } from "@clerk/nextjs";
 import { AppSidebar } from "../_components/app-sidebar";
 import { ProjectNav } from "./_components/project-nav";
+import { LayoutTransition } from "./_components/layout-transition";
 
 type Props = {
     children: React.ReactNode;
@@ -20,8 +21,10 @@ const SidebarLayout = ({ children }: Props) => {
                 </div>
                 <div className="h-4"></div>
                 {/* main content */}
-                <div className="border-sidebar-border bg-sidebar border shadow rounded-md overflow-y-scroll h-[calc(100vh-6rem)] p-4">
-                    {children}
+                <div className="border-sidebar-border bg-sidebar border shadow rounded-md overflow-y-scroll h-[calc(100vh-6rem)] p-4 relative">
+                    <LayoutTransition>
+                        {children}
+                    </LayoutTransition>
                 </div>
             </main>
             <ProjectNav />

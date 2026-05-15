@@ -9,18 +9,34 @@ import MeetingCard from "./meeting-card"
 import { ArchiveButton } from "./archive-button"
 import { TeamMembers } from "./team-members"
 import dynamic from "next/dynamic"
+import { motion } from "framer-motion"
 
 const InviteButton = dynamic(() => import("./invite-button").then(mod => mod.InviteButton), {
     ssr: false
 })
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+}
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
+}
+
 export default function DashboardPage() {
     const { project } = useProjects()
     return (
-        <div>
+        <motion.div variants={containerVariants} initial="hidden" animate="visible">
             <div className="flex items-center justify-between flex-wrap gap-y-4">
                 {/* github link */}
-                <div className="w-fit rounded-md bg-primary px-4 py-2">
+                <motion.div variants={itemVariants} className="w-fit rounded-md bg-primary px-4 py-2 shadow-sm">
                     <div className="flex items-center">
                         <GitBranch className="size-6 text-white" />
                         <div className="ml-2">
@@ -33,26 +49,28 @@ export default function DashboardPage() {
                             </p>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
                 <div className="h-4"></div>
 
-                <div className="flex items-center gap-4">
+                <motion.div variants={itemVariants} className="flex items-center gap-4">
                     <TeamMembers />
                     <InviteButton />
                     <ArchiveButton />
-                </div>
+                </motion.div>
             </div>
 
             <div className="mt-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-5 h-fit">
+                <motion.div variants={itemVariants} className="grid grid-cols-1 gap-4 sm:grid-cols-5 h-fit">
                     <AskQuestionCard />
                     <MeetingCard />
-                </div>
+                </motion.div>
             </div>
 
             <div className="mt-8"></div>
-            <CommitLog />
-        </div>
+            <motion.div variants={itemVariants}>
+                <CommitLog />
+            </motion.div>
+        </motion.div>
     )
 }

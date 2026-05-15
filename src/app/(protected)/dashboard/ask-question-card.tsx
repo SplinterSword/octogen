@@ -13,6 +13,7 @@ import { CodeReferences } from "./code-references";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import useRefetch from "@/hooks/use-refetch";
+import { motion } from "framer-motion";
 
 export default function AskQuestionCard() {
     const { project } = useProjects();
@@ -83,24 +84,26 @@ export default function AskQuestionCard() {
 
                 </DialogContent>
             </Dialog>
-            <Card className='relative col-span-3'>
-                <CardHeader>
-                    <CardTitle>Ask a Question</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={onSubmit}>
-                        <Textarea 
-                            value={question}
-                            onChange={(e:React.ChangeEvent<HTMLTextAreaElement>) => setQuestion(e.target.value)}
-                            placeholder='Which file should I edit to change the homepage ?' 
-                        />
-                        <div className="h-4"></div>
-                        <Button type='submit' disabled={loading}>
-                            Ask Octogen!
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
+            <motion.div className="col-span-3" whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                <Card className='relative h-full transition-shadow hover:shadow-xl'>
+                    <CardHeader>
+                        <CardTitle>Ask a Question</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={onSubmit}>
+                            <Textarea 
+                                value={question}
+                                onChange={(e:React.ChangeEvent<HTMLTextAreaElement>) => setQuestion(e.target.value)}
+                                placeholder='Which file should I edit to change the homepage ?' 
+                            />
+                            <div className="h-4"></div>
+                            <Button type='submit' disabled={loading}>
+                                Ask Octogen!
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </motion.div>
         </>
     );
 }
