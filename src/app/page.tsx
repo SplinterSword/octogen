@@ -1,8 +1,5 @@
-export default async function Home() {
+import { redirect } from "next/navigation"
 
-  return (
-    <>
-      <h1>Octogen</h1>
-    </>
-  );
+export default async function Home() {
+  redirect("/dashboard")
 }
