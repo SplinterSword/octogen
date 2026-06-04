@@ -6,6 +6,28 @@ export function countTokens(text: string): number {
     return encoder.encode(text).length;
 }
 
+/**
+ * Truncate text to fit within a token limit using binary search.
+ * O(log n) instead of O(n) character-by-character removal.
+ */
+export function truncateToTokenLimit(text: string, maxTokens: number): string {
+    if (countTokens(text) <= maxTokens) return text;
+
+    let low = 0;
+    let high = text.length;
+
+    while (low < high - 1) {
+        const mid = Math.floor((low + high) / 2);
+        if (countTokens(text.slice(0, mid)) <= maxTokens) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+    }
+
+    return text.slice(0, low);
+}
+
 export function shouldIgnoreFile(line: string, ignorePatterns: string[]): boolean {
     const match = line.match(/^diff --git a\/(.+) b\/(.+)$/);
     if (!match) return false;

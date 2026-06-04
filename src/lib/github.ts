@@ -105,12 +105,26 @@ export const pullCommits = async (projectID: string) => {
   const { githubUrl } = await fetchProjectGithubUrl(projectID);
   const commitHashes = await getCommitHashes(githubUrl);
   const unprocessedCommits = await filterUnprocessedCommits(commitHashes, projectID);
-  const summaries: string[] = [];
 
-  for (const commit of unprocessedCommits) {
-    const response = await summarizeCommit(githubUrl, commit.commitHash);
-    const trimmed = response.trim();
-    summaries.push(trimmed.length > 0 ? trimmed : "");
+  // Process commits in parallel batches of 3 to avoid overwhelming APIs
+  const CONCURRENCY = 3;
+  const summaries: string[] = new Array(unprocessedCommits.length).fill("");
+
+  for (let i = 0; i < unprocessedCommits.length; i += CONCURRENCY) {
+    const batch = unprocessedCommits.slice(i, i + CONCURRENCY);
+    const batchResults = await Promise.allSettled(
+      batch.map(commit => summarizeCommit(githubUrl, commit.commitHash))
+    );
+
+    batchResults.forEach((result, j) => {
+      summaries[i + j] = result.status === "fulfilled"
+        ? result.value.trim()
+        : "";
+
+      if (result.status === "rejected") {
+        console.error(`Failed to summarize commit ${i + j}:`, result.reason);
+      }
+    });
   }
 
   const commits = await db.commit.createMany({
