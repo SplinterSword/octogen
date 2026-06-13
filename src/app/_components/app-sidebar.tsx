@@ -17,6 +17,7 @@ const items = [
         icon: CreditCard,
     }
 ]
+import { OctogenLogo } from "@/components/octogen-logo"
 
 export function AppSidebar() {
     const pathname = usePathname()
@@ -44,8 +45,9 @@ export function AppSidebar() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-8 h-8 bg-primary rounded-full"
-                    ></motion.div>
+                    >
+                        <OctogenLogo className="w-8 h-8" />
+                    </motion.div>
                     {open && (
                         <motion.h1 
                             initial={{ opacity: 0, x: -10 }}

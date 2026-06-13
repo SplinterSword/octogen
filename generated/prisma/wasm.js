@@ -238,7 +238,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/splintersword/extraStorage/Projects/octogen/generated/prisma",
+      "value": "/home/splintersword/extraStorage/Projects/Personal Projects/octogen/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -254,7 +254,7 @@ const config = {
     "previewFeatures": [
       "postgresqlExtensions"
     ],
-    "sourceFilePath": "/home/splintersword/extraStorage/Projects/octogen/prisma/schema.prisma",
+    "sourceFilePath": "/home/splintersword/extraStorage/Projects/Personal Projects/octogen/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

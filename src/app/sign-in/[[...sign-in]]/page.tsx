@@ -1,5 +1,5 @@
 import { SignIn } from '@clerk/nextjs'
-import { Hexagon } from 'lucide-react'
+import { OctogenLogo } from '@/components/octogen-logo'
 
 export default function Page() {
   return (
@@ -13,7 +13,7 @@ export default function Page() {
       <div className="relative w-full max-w-md space-y-8">
         <div className="flex flex-col items-center">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-            <Hexagon className="h-8 w-8 text-primary" />
+            <OctogenLogo className="h-8 w-8 text-primary" />
           </div>
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-foreground">
             Welcome back to Octogen
