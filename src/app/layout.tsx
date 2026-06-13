@@ -13,7 +13,7 @@ const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 export const metadata: Metadata = {
   title: "Octogen",
   description: "AI-powered software development tool",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/octogen-logo.svg" }],
 };
 
 const geist = Geist({
