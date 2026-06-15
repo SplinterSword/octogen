@@ -5,6 +5,7 @@ import { uploadFile } from "@/lib/firebase"
 import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { Presentation, Upload } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar"
 import { api } from "@/trpc/react"
@@ -44,6 +45,9 @@ export default function MeetingCard() {
         },
         multiple: false,
         maxSize: 50_000_000,
+        noClick: true,
+        noKeyboard: true,
+        noDrag: true,
         onDrop: async (acceptedFiles) => {
             if (!project) return
             console.log(acceptedFiles)
@@ -85,39 +89,50 @@ export default function MeetingCard() {
     })
 
     return (
-        <motion.div className="col-span-2" whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-            <Card className="flex flex-col items-center justify-center p-10 h-full transition-shadow hover:shadow-xl" {...getRootProps()}>
-                {!isUploading ? (
-                    <>
-                        <Presentation className="h-10 w-10 animate-bounce" />
-                        <h3 className="mt-2 text-sm font-semibold text-gray-900">
-                            Create a new meeting
-                        </h3>
-                        <p className="mt-1 text-center text-sm text-gray-500">
-                            Analyse your meeting with Octogen
-                            <br/>
-                            Powered By Assembly AI
-                        </p>
-                        <div className="mt-6">
-                            <Button disabled={isUploading}>
-                                <Upload className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
-                                Upload Meeting
-                                <input {...getInputProps()} className="hidden" />
-                            </Button>
-                        </div>
-                    </>
-                ) : (
-                    <div>
-                        <CircularProgressbar value={progress} text={`${progress}%`} styles={
-                            buildStyles({
-                                pathColor: "oklch(0.511 0.096 186.391)",
-                                textColor: "oklch(0.511 0.096 186.391)"
-                            })
-                        }/>
-                        <p className="text-sm text-gray-500 text-center">Uploading your meeting...</p>
-                    </div>
-                )}
-            </Card>
-        </motion.div>
+        <Dialog>
+            <DialogTrigger asChild>
+                <motion.div className="col-span-2" whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                    <Card className="flex flex-col items-center justify-center p-10 h-full transition-shadow hover:shadow-xl cursor-pointer" {...getRootProps()}>
+                        {!isUploading ? (
+                            <>
+                                <Presentation className="h-10 w-10 animate-bounce" />
+                                <h3 className="mt-2 text-sm font-semibold text-gray-900">
+                                    Create a new meeting
+                                </h3>
+                                <p className="mt-1 text-center text-sm text-gray-500">
+                                    Analyse your meeting with Octogen
+                                    <br/>
+                                    Powered By Assembly AI
+                                </p>
+                                <div className="mt-6">
+                                    <Button disabled={isUploading}>
+                                        <Upload className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+                                        Upload Meeting
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <div>
+                                <CircularProgressbar value={progress} text={`${progress}%`} styles={
+                                    buildStyles({
+                                        pathColor: "oklch(0.511 0.096 186.391)",
+                                        textColor: "oklch(0.511 0.096 186.391)"
+                                    })
+                                }/>
+                                <p className="text-sm text-gray-500 text-center">Uploading your meeting...</p>
+                            </div>
+                        )}
+                    </Card>
+                </motion.div>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Meeting Transcription Disabled</DialogTitle>
+                    <DialogDescription>
+                        This feature has been fully implemented, tested, and works as intended. However, it is currently non-functional because the Firebase/Google Cloud Storage subscription has ended and the bucket is disabled to avoid costs.
+                    </DialogDescription>
+                </DialogHeader>
+            </DialogContent>
+        </Dialog>
     )
 }
