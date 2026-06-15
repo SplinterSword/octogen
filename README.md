@@ -116,7 +116,7 @@ flowchart TB
 ### How the RAG Pipeline Works
 
 ```mermaid
-sequencediagram
+sequenceDiagram
     participant U as User
     participant FE as Frontend
     participant SA as Server Action
