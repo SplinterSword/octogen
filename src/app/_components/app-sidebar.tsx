@@ -4,7 +4,7 @@ import { Sidebar, SidebarContent, SidebarHeader, SidebarGroup, SidebarGroupLabel
 import { CreditCard, Plus } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "@/components/ui/sidebar"
 import { useProjects } from "@/hooks/use-projects"
@@ -21,6 +21,7 @@ import { OctogenLogo } from "@/components/octogen-logo"
 
 export function AppSidebar() {
     const pathname = usePathname()
+    const router = useRouter()
     const { open } = useSidebar()
     const { projects, projectId, setProjectId } = useProjects()
 
@@ -96,7 +97,10 @@ export function AppSidebar() {
                                     <motion.div key={project.name} variants={itemVariants}>
                                         <SidebarMenuItem>
                                             <SidebarMenuButton asChild>
-                                                <div onClick={() => setProjectId(project.id)} className="cursor-pointer transition-colors">
+                                                <div onClick={() => {
+                                                    setProjectId(project.id)
+                                                    router.push('/dashboard')
+                                                }} className="cursor-pointer transition-colors">
                                                     <div className={cn("rounded-sm border size-6 flex items-center justify-center text-sm bg-muted text-primary transition-colors",
                                                         {
                                                             'border-primary bg-primary text-white': projectId === project.id

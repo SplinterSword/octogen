@@ -5,6 +5,7 @@ import { Info } from "lucide-react"
 import { useState } from "react"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { createCheckoutSession } from "@/lib/stripe"
 
 export default function BillingPage() {
@@ -32,11 +33,26 @@ export default function BillingPage() {
             <div className="h-6"></div>
             <Slider defaultValue={[100]} max={1000} min={100} step={10} onValueChange={(value: number[]) => setCreditsToBuy(value)} value={creditsToBuy} />
             <div className="h-4"></div>
-            <Button onClick={() => {
-                createCheckoutSession(creditsToBuyAmount!)
-            }}>
-                Buy {creditsToBuyAmount} credits for ${price}
-            </Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button>
+                        Buy {creditsToBuyAmount} credits for ${price}
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Stripe Test Environment</DialogTitle>
+                        <DialogDescription>
+                            This project is currently using the Stripe test environment to showcase its checkout functionality to recruiters. No real charges will be made. Please use Stripe test cards if you would like to test the payment process.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={() => createCheckoutSession(creditsToBuyAmount!)}>
+                            Proceed to Checkout
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

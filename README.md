@@ -58,6 +58,9 @@ Invite team members to projects via shareable links (`/join/{projectId}`). All t
 ### 💳 Credit-Based Usage System
 Each file in a repository costs one credit to index. Users start with 150 free credits. Additional credits can be purchased via Stripe Checkout at a rate of $2 per 100 credits. The billing page shows current credit balance and provides a slider to select purchase amounts.
 
+> [!NOTE]
+> **Test Environment:** The Stripe integration is currently running in test mode to showcase the checkout functionality. No real payments will be processed. Please use [Stripe test cards](https://stripe.com/docs/testing) if you would like to test the checkout flow.
+
 ### 📂 Project Management
 Create, switch between, and archive projects from the sidebar. Each project is linked to a GitHub repository URL. Soft-delete (archive) support allows projects to be hidden without data loss.
 
