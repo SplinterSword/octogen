@@ -49,6 +49,9 @@ When a project is created or the dashboard is loaded, Octogen fetches the latest
 ### 🎙️ Meeting Transcription & Issue Extraction
 Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are stored in Firebase Storage and transcribed using AssemblyAI's auto-chaptering feature. Each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps.
 
+> [!DISCLAIMER]
+> **Status:** This feature has been fully implemented, tested, and works as intended. However, it may currently be non-functional in the live version/demo because the Firebase/Google Cloud Storage subscription has ended and the bucket is disabled to avoid costs.
+
 ### 👥 Team Collaboration
 Invite team members to projects via shareable links (`/join/{projectId}`). All team members can view the same commit history, ask questions, and access meeting transcripts. Team member avatars are displayed on the dashboard.
 
@@ -336,13 +339,13 @@ The app will be available at `http://localhost:3000`.
 | `GITHUB_TOKEN` | ✅ | GitHub Personal Access Token for API access |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | ✅ | Google AI API key for Gemini models and embeddings |
 | `GROQ_API_KEY` | ✅ | Groq API key for fast inference models |
-| `FIREBASE_API_KEY` | ✅ | Firebase project API key |
-| `FIREBASE_AUTH_DOMAIN` | ✅ | Firebase auth domain |
-| `FIREBASE_PROJECT_ID` | ✅ | Firebase project ID |
-| `FIREBASE_STORAGE_BUCKET` | ✅ | Firebase Storage bucket |
-| `FIREBASE_MESSAGING_SENDER_ID` | ✅ | Firebase messaging sender ID |
-| `FIREBASE_APP_ID` | ✅ | Firebase app ID |
-| `FIREBASE_MEASUREMENT_ID` | ❌ | Firebase analytics measurement ID |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | ✅ | Firebase project API key |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | ✅ | Firebase auth domain |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | ✅ | Firebase project ID |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | ✅ | Firebase Storage bucket |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ✅ | Firebase messaging sender ID |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | ✅ | Firebase app ID |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | ❌ | Firebase analytics measurement ID |
 | `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for meeting transcription |
 | `STRIPE_SECRET_KEY` | ✅ | Stripe secret key for payment processing |
 | `STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe publishable key |

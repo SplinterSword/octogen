@@ -36,11 +36,12 @@ export async function POST(req: NextRequest) {
             where: { id: meetingId },
             data: { 
                 status: "COMPLETED",
-                name: summaries[0]!.headline
+                name: summaries[0]?.headline || "Meeting"
             },
         })
         return NextResponse.json({ success: true }, { status: 200 })
     } catch (error) {
+        console.error("Error processing meeting:", error)
         return new Response("Internal Server Error", { status: 500 })
     }
 }

@@ -50,29 +50,37 @@ export default function MeetingCard() {
             const file = acceptedFiles[0]
             if (!file) return 
             setIsUploading(true)
-            const downloadURL = (await uploadFile(file as File, setProgress)) as string
-            await uploadMeeting.mutate({
-                name: file.name,
-                projectId: project?.id,
-                meetingUrl: downloadURL
-            }, {
-                onSuccess: (meeting) => {
-                    toast.success("Meeting uploaded successfully")
-                    router.push(`/meetings`)
-                    refetch()
-                    processMeeting.mutateAsync({
-                        meetingUrl: downloadURL,
-                        meetingId: meeting.id,
-                        projectId: project?.id
-                    })
-                },
-                onError: (error) => {
-                    toast.error("Failed to upload meeting", {
-                        description: error.message
-                    })
-                }
-            })
-            setIsUploading(false)
+            try {
+                const downloadURL = (await uploadFile(file as File, setProgress)) as string
+                await uploadMeeting.mutate({
+                    name: file.name,
+                    projectId: project?.id,
+                    meetingUrl: downloadURL
+                }, {
+                    onSuccess: (meeting) => {
+                        toast.success("Meeting uploaded successfully")
+                        router.push(`/meetings`)
+                        refetch()
+                        processMeeting.mutateAsync({
+                            meetingUrl: downloadURL,
+                            meetingId: meeting.id,
+                            projectId: project?.id
+                        })
+                    },
+                    onError: (error) => {
+                        toast.error("Failed to create meeting record", {
+                            description: error.message
+                        })
+                    }
+                })
+            } catch (error: any) {
+                console.error("Upload error:", error)
+                toast.error("Failed to upload meeting to storage", {
+                    description: error?.message || "Check your Firebase Storage rules."
+                })
+            } finally {
+                setIsUploading(false)
+            }
         }
     })
 
