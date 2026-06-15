@@ -49,7 +49,7 @@ When a project is created or the dashboard is loaded, Octogen fetches the latest
 ### 🎙️ Meeting Transcription & Issue Extraction
 Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are stored in Firebase Storage and transcribed using AssemblyAI's auto-chaptering feature. Each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps.
 
-> [!DISCLAIMER]
+> [!NOTE]
 > **Status:** This feature has been fully implemented, tested, and works as intended. However, it may currently be non-functional in the live version/demo because the Firebase/Google Cloud Storage subscription has ended and the bucket is disabled to avoid costs.
 
 ### 👥 Team Collaboration
