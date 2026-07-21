@@ -506,23 +506,6 @@ While this is a pragmatic short-term solution, the proper fix is to resolve all 
 
 ---
 
-## Future Improvements
-
-| Priority | Improvement | Expected Impact |
-|---|---|---|
-| 🔴 High | Add automated test suite (unit + integration) | Catch regressions, enable confident refactoring |
-| 🔴 High | Incremental re-indexing for updated repositories | Avoid re-processing unchanged files, save credits |
-| 🔴 High | Remove build-time type/lint bypass and fix all errors | Catch bugs at build time |
-| 🟡 Medium | Multi-branch support | Index feature branches, compare across branches |
-| 🟡 Medium | GitHub webhook integration for real-time commit sync | Eliminate polling, instant commit summaries |
-| 🟡 Medium | Auto-detect default branch (main/master/develop) | Support all repository configurations |
-| 🟡 Medium | Cache commit summaries to avoid redundant API calls | Reduce latency and API costs |
-| 🟢 Low | Dark mode support | Improved developer experience |
-| 🟢 Low | Export Q&A history as markdown/PDF | Knowledge sharing outside the platform |
-| 🟢 Low | Repository-level usage analytics | Track question patterns and team activity |
-
----
-
 ## Deployment
 
 ### Build
