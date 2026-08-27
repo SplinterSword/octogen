@@ -6,7 +6,7 @@ import { api } from '@/trpc/react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import useRefetch from '@/hooks/use-refetch'
-import { Info } from 'lucide-react'
+import { Info, Loader2 } from 'lucide-react'
 
 type FormInput = {
     repoUrl: string
@@ -30,6 +30,7 @@ const CreatePage = () => {
                 onSuccess: () => {
                     toast.success('Project created successfully')
                     reset()
+                    checkCredits.reset()
                     refetch()
                 },
                 onError: (error) => {
@@ -47,7 +48,7 @@ const CreatePage = () => {
     const hasEnoughCredits = checkCredits.data?.userCredits ? checkCredits.data.userCredits >= checkCredits.data.fileCount : true
 
     return (
-        <div className='flex items-center gap-12 h-full justify-center'>
+        <div className='relative flex items-center gap-12 h-full justify-center'>
             <img src="/undraw.github.svg" className="h-56 w-auto" alt="GitHub" />
             <div>
                 <div>
@@ -84,6 +85,14 @@ const CreatePage = () => {
                     </form>
                 </div>
             </div>
+            {createProject.isPending && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+                    <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                        <p className="text-sm text-muted-foreground">Creating project......It might take some time to make, don't refresh the page</p>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

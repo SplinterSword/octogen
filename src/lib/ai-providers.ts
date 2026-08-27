@@ -22,7 +22,7 @@ export const groq = createGroq({
  */
 function selectModel(tokenCount: number) {
     if (tokenCount <= 1500) {
-        return { model: groq("llama-3.1-8b-instant"), name: "groq-llama-8b" };
+        return { model: groq("openai/gpt-oss-20b"), name: "groq-llama-8b" };
     }
     if (tokenCount <= 6000) {
         return { model: groq("openai/gpt-oss-120b"), name: "groq-gpt-oss-120b" };
