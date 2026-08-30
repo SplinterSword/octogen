@@ -188,8 +188,52 @@ export const projectRouter = createTRPCRouter({
                 id: input.projectId,
             },
             data: {
-                deletedAt: new Date()
+                deletedAt: new Date() 
             }
+        })
+
+        await ctx.db.userToProject.deleteMany({
+            where: {
+                projectId: input.projectId
+            }
+        })
+
+        await ctx.db.commit.deleteMany({
+            where: {
+                projectId: input.projectId,
+            }
+        })
+
+        await ctx.db.sourceCodeEmbedding.deleteMany({
+            where: {
+                projectId: input.projectId
+            }
+        })
+
+        await ctx.db.issue.deleteMany({
+            where: {
+                meeting: {
+                    projectId: input.projectId
+                }
+            }
+        })
+
+        await ctx.db.meeting.deleteMany({
+            where: {
+                projectId: input.projectId
+            }
+        })
+
+        await ctx.db.questions.deleteMany({
+            where: {
+                projectId: input.projectId
+            }
+        })
+
+        await ctx.db.project.delete({
+           where: {
+                id: input.projectId
+           } 
         })
         return project
     }),

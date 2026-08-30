@@ -41,6 +41,11 @@ const CreatePage = () => {
             checkCredits.mutate({
                 githubUrl: data.repoUrl,
                 githubToken: data.githubToken
+            }, {
+                onError: (error) => {
+                    console.log(error.message)
+                    toast.error(error.message)
+                }
             })
         }
     }
@@ -86,10 +91,10 @@ const CreatePage = () => {
                 </div>
             </div>
             {createProject.isPending && (
-                <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+                <div className="absolute inset-0 flex items-center justify-center bg-background">
                     <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-8 w-8 animate-spin" />
-                        <p className="text-sm text-muted-foreground">Creating project......It might take some time to make, don't refresh the page</p>
+                        <p className="text-sm text-muted-foreground">Creating project......It might take some time to make, don't refresh the page or navigate out of it</p>
                     </div>
                 </div>
             )}
