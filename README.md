@@ -47,10 +47,7 @@ Ask natural language questions about your repository and receive contextual answ
 When a project is created or the dashboard is loaded, Octogen fetches the latest commits from the GitHub API, retrieves their diffs, and generates concise AI summaries. A tiered model selection strategy routes small diffs to fast models (Llama 3.1 8B), medium diffs to larger models (GPT-oss 120B via Groq), and large diffs to Gemini Flash's 1M context window. A fallback chain ensures reliability.
 
 ### 🎙️ Meeting Transcription & Issue Extraction
-Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are stored in Firebase Storage and transcribed using AssemblyAI's auto-chaptering feature. Each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps.
-
-> [!NOTE]
-> **Status:** This feature has been fully implemented, tested, and works as intended. However, it may currently be non-functional in the live version/demo because the Firebase/Google Cloud Storage subscription has ended and the bucket is disabled to avoid costs.
+Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are uploaded directly to AssemblyAI's temporary storage via `client.files.upload()`, eliminating the need for external storage buckets. Transcription uses AssemblyAI's auto-chaptering feature, and each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps. Works seamlessly on Vercel and other serverless platforms.
 
 ### 👥 Team Collaboration
 Invite team members to projects via shareable links (`/join/{projectId}`). All team members can view the same commit history, ask questions, and access meeting transcripts. Team member avatars are displayed on the dashboard.
@@ -85,12 +82,11 @@ flowchart TB
     subgraph AI["AI Services"]
         Groq["Groq API\n(Llama 8B / GPT-oss 120B)"]
         Gemini["Google Gemini\n(2.5 Flash + Embeddings)"]
-        Assembly["AssemblyAI\n(Transcription)"]
+        Assembly["AssemblyAI\n(Upload + Transcription)"]
     end
 
     subgraph Data["Data Layer"]
         PG["PostgreSQL + pgvector"]
-        Firebase["Firebase Storage"]
     end
 
     subgraph External["External Services"]
@@ -107,7 +103,6 @@ flowchart TB
     TRPC_S --> GH
     TRPC_S --> Gemini
     TRPC_S --> Groq
-    UI --> Firebase
     Clerk --> UI
     Clerk --> TRPC_S
     Stripe --> API
@@ -176,7 +171,7 @@ sequenceDiagram
 | **Groq** (Llama 3.1 8B / GPT-oss 120B) | Fast inference for small/medium commit diffs |
 | **LangChain** | GitHub repository loading and document splitting |
 | **js-tiktoken** | Token counting for intelligent model routing |
-| **AssemblyAI** | Audio transcription with auto-chaptering |
+| **AssemblyAI** | Audio upload + transcription with auto-chaptering |
 
 ### Authentication
 | Technology | Purpose |
@@ -191,7 +186,6 @@ sequenceDiagram
 ### Infrastructure
 | Technology | Purpose |
 |---|---|
-| **Firebase Storage** | Meeting audio file storage |
 | **Docker / Podman** | Local PostgreSQL database via `start-database.sh` |
 | **Bun** | Package manager (lockfile: `bun.lock`) |
 
@@ -215,6 +209,7 @@ octogen/
 │   │   ├── sign-up/             # Clerk sign-up page
 │   │   ├── api/
 │   │   │   ├── trpc/            # tRPC HTTP handler
+│   │   │   ├── upload-meeting/  # AssemblyAI upload + Meeting creation
 │   │   │   ├── process-meeting/ # Meeting transcription endpoint (AssemblyAI)
 │   │   │   └── webhook/stripe/  # Stripe webhook for credit fulfillment
 │   │   ├── _components/
@@ -239,8 +234,7 @@ octogen/
 │   │   ├── github.ts           # Commit fetching + AI summarization pipeline
 │   │   ├── github-loader.ts    # Repo indexing: load files → summarize → embed → store
 │   │   ├── commit-helpers.ts   # Token counting, truncation, diff filtering
-│   │   ├── firebase.ts         # Firebase Storage upload with progress tracking
-│   │   ├── assembly.ts         # AssemblyAI transcription + chapter extraction
+│   │   ├── assembly.ts         # AssemblyAI upload + transcription + chapter extraction
 │   │   ├── stripe.ts           # Stripe checkout session creation
 │   │   └── utils.ts            # cn() utility (clsx + tailwind-merge)
 │   ├── server/
@@ -342,14 +336,14 @@ The app will be available at `http://localhost:3000`.
 | `GITHUB_TOKEN` | ✅ | GitHub Personal Access Token for API access |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | ✅ | Google AI API key for Gemini models and embeddings |
 | `GROQ_API_KEY` | ✅ | Groq API key for fast inference models |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | ✅ | Firebase project API key |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | ✅ | Firebase auth domain |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | ✅ | Firebase project ID |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | ✅ | Firebase Storage bucket |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ✅ | Firebase messaging sender ID |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | ✅ | Firebase app ID |
-| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | ❌ | Firebase analytics measurement ID |
-| `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for meeting transcription |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | ❌ | Firebase project API key (deprecated, not used by meeting feature) |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | ❌ | Firebase auth domain (deprecated, not used by meeting feature) |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | ❌ | Firebase project ID (deprecated, not used by meeting feature) |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | ❌ | Firebase Storage bucket (deprecated, not used by meeting feature) |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ❌ | Firebase messaging sender ID (deprecated, not used by meeting feature) |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | ❌ | Firebase app ID (deprecated, not used by meeting feature) |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | ❌ | Firebase analytics measurement ID (deprecated, not used by meeting feature) |
+| `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for meeting upload + transcription |
 | `STRIPE_SECRET_KEY` | ✅ | Stripe secret key for payment processing |
 | `STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe publishable key |
 | `STRIPE_WEBHOOK_SECRET` | ✅ | Stripe webhook signing secret |
@@ -495,11 +489,10 @@ While this is a pragmatic short-term solution, the proper fix is to resolve all 
 - **Single-branch indexing:** Only the `main` branch is indexed. Other branches are not supported.
 - **No incremental re-indexing:** When a repository is updated, there is no mechanism to re-index only the changed files. The entire repository must be re-created.
 - **No real-time sync:** Commit summaries are fetched on dashboard load, not via webhooks. There can be a delay before new commits appear.
-- **Meeting file size limit:** Audio uploads are capped at 50MB.
+- **Meeting file size limit:** Audio uploads are capped at 50MB (AssemblyAI upload limit).
 - **Build-time type safety disabled:** TypeScript and ESLint errors are currently ignored during production builds (`next.config.js`).
 - **No test suite:** The project currently has no automated tests.
 - **Hardcoded branch name:** The GitHub loader always clones from `main`, which will fail for repositories using `master` or other default branch names.
-- **Assembly AI module-level execution:** The `src/lib/assembly.ts` file contains a top-level `await` call to `processMeeting` with a hardcoded test URL, which could cause issues during module import.
 - **Post router is scaffolding:** The `post` tRPC router is leftover from the create-t3-app template and references a non-existent `Post` model.
 - **No rate limiting on API routes:** The meeting processing and webhook endpoints lack application-level rate limiting.
 - **Credit system is unidirectional:** Credits are consumed but never refunded if indexing fails partway through.

@@ -11,6 +11,15 @@ function msToTime(ms: number) {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
+export const uploadFileToAssemblyAI = async (file: File): Promise<string> => {
+    if (!process.env.ASSEMBLY_AI_API_KEY) {
+        throw new Error('AssemblyAI API key is required');
+    }
+
+    const uploadUrl = await client.files.upload(file);
+    return uploadUrl;
+}
+
 export const processMeeting = async (meetingUrl: string) => {
     if (!meetingUrl) {
         throw new Error('Meeting URL is required');

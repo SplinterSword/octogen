@@ -36,7 +36,7 @@ function IssueCard({ issue }: { issue: NonNullable<RouterOutputs["project"]["get
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
-            <Card className="relative">
+            <Card className="relative flex flex-col h-full">
                 <CardHeader>
                     <CardTitle className="text-xl">
                         {issue.gist}
@@ -47,7 +47,7 @@ function IssueCard({ issue }: { issue: NonNullable<RouterOutputs["project"]["get
                     </CardDescription>
                 </CardHeader>
 
-                <CardContent>
+                <CardContent className="mt-auto">
                     <Button onClick={() => {setOpen(true)}}>
                         View Details
                     </Button>

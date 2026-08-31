@@ -42,6 +42,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# meeting audio files
+/public/meetings/
+
 # idea files
 .idea
 .codex

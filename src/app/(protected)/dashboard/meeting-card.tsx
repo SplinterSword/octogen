@@ -1,43 +1,77 @@
-'use client'
+"use client"
 
 import { Card } from "@/components/ui/card"
-import { uploadFile } from "@/lib/firebase"
+import { useProjects } from "@/hooks/use-projects"
 import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { Presentation, Upload } from "lucide-react"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar"
-import { api } from "@/trpc/react"
-import { useProjects } from "@/hooks/use-projects"
-import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
-import useRefetch from '@/hooks/use-refetch'
-import axios from "axios"
+import useRefetch from "@/hooks/use-refetch"
+import { toast } from "sonner"
 import { motion } from "framer-motion"
 
 export default function MeetingCard() {
     const { project } = useProjects()
     const refetch = useRefetch()
+
     const processMeeting = useMutation({
-        mutationFn: async (data: {meetingUrl: string, meetingId: string, projectId: string }) => {
-            const response = await axios.post('/api/process-meeting', {
-                meetingUrl: data.meetingUrl,
-                meetingId: data.meetingId,
-                projectId: data.projectId,
-            }, {
+        mutationFn: async (data: { meetingUrl: string, meetingId: string, projectId: string }) => {
+            const response = await fetch("/api/process-meeting", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
+                body: JSON.stringify({
+                    meetingUrl: data.meetingUrl,
+                    meetingId: data.meetingId,
+                    projectId: data.projectId,
+                }),
             })
-            return response.data
+            return response.json()
         },
     })
-    const [progress, setProgress] = useState(0)
     const [isUploading, setIsUploading] = useState(false)
-    const uploadMeeting = api.project.uploadMeeting.useMutation()
     const router = useRouter()
+
+    const onDropHandler = async (acceptedFiles: File[]) => {
+        if (!project) return
+        const file = acceptedFiles[0]
+        if (!file) return
+        setIsUploading(true)
+        try {
+            const formData = new FormData()
+            formData.append("file", file)
+            formData.append("projectId", project?.id)
+            formData.append("name", file.name)
+
+            const response = await fetch("/api/upload-meeting", {
+                method: "POST",
+                body: formData,
+            })
+            const result = await response.json()
+
+            if (!response.ok) throw new Error(result.message || "Upload failed")
+
+            toast.success("Meeting uploaded successfully")
+            router.push(`/meetings`)
+            refetch()
+
+            processMeeting.mutateAsync({
+                meetingUrl: result.meetingUrl,
+                meetingId: result.meeting.id,
+                projectId: project?.id,
+            })
+        } catch (error: any) {
+            console.error("Upload error:", error)
+            toast.error("Failed to upload meeting", {
+                description: error?.message
+            })
+        } finally {
+            setIsUploading(false)
+        }
+    }
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: {
@@ -45,94 +79,45 @@ export default function MeetingCard() {
         },
         multiple: false,
         maxSize: 50_000_000,
-        noClick: true,
+        noClick: false,
         noKeyboard: true,
-        noDrag: true,
-        onDrop: async (acceptedFiles) => {
-            if (!project) return
-            console.log(acceptedFiles)
-            const file = acceptedFiles[0]
-            if (!file) return 
-            setIsUploading(true)
-            try {
-                const downloadURL = (await uploadFile(file as File, setProgress)) as string
-                await uploadMeeting.mutate({
-                    name: file.name,
-                    projectId: project?.id,
-                    meetingUrl: downloadURL
-                }, {
-                    onSuccess: (meeting) => {
-                        toast.success("Meeting uploaded successfully")
-                        router.push(`/meetings`)
-                        refetch()
-                        processMeeting.mutateAsync({
-                            meetingUrl: downloadURL,
-                            meetingId: meeting.id,
-                            projectId: project?.id
-                        })
-                    },
-                    onError: (error) => {
-                        toast.error("Failed to create meeting record", {
-                            description: error.message
-                        })
-                    }
-                })
-            } catch (error: any) {
-                console.error("Upload error:", error)
-                toast.error("Failed to upload meeting to storage", {
-                    description: error?.message || "Check your Firebase Storage rules."
-                })
-            } finally {
-                setIsUploading(false)
-            }
-        }
+        noDrag: false,
+        onDrop: onDropHandler,
     })
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <motion.div className="col-span-2" whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-                    <Card className="flex flex-col items-center justify-center p-10 h-full transition-shadow hover:shadow-xl cursor-pointer" {...getRootProps()}>
-                        {!isUploading ? (
-                            <>
-                                <Presentation className="h-10 w-10 animate-bounce" />
-                                <h3 className="mt-2 text-sm font-semibold text-gray-900">
-                                    Create a new meeting
-                                </h3>
-                                <p className="mt-1 text-center text-sm text-gray-500">
-                                    Analyse your meeting with Octogen
-                                    <br/>
-                                    Powered By Assembly AI
-                                </p>
-                                <div className="mt-6">
-                                    <Button disabled={isUploading}>
-                                        <Upload className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
-                                        Upload Meeting
-                                    </Button>
-                                </div>
-                            </>
-                        ) : (
-                            <div>
-                                <CircularProgressbar value={progress} text={`${progress}%`} styles={
-                                    buildStyles({
-                                        pathColor: "oklch(0.511 0.096 186.391)",
-                                        textColor: "oklch(0.511 0.096 186.391)"
-                                    })
-                                }/>
-                                <p className="text-sm text-gray-500 text-center">Uploading your meeting...</p>
-                            </div>
-                        )}
-                    </Card>
-                </motion.div>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Meeting Transcription Disabled</DialogTitle>
-                    <DialogDescription>
-                        This feature has been fully implemented, tested, and works as intended. However, it is currently non-functional because the Firebase/Google Cloud Storage subscription has ended and the bucket is disabled to avoid costs.
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+        <motion.div className="col-span-2" whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+            <Card
+                className="flex flex-col items-center justify-center p-10 h-full transition-shadow hover:shadow-xl cursor-pointer"
+                {...getRootProps()}
+            >
+                <input {...getInputProps()} />
+                {!isUploading ? (
+                    <>
+                        <Presentation className="h-10 w-10 animate-bounce" />
+                        <h3 className="mt-2 text-sm font-semibold text-gray-900">
+                            Create a new meeting
+                        </h3>
+                        <p className="mt-1 text-center text-sm text-gray-500">
+                            Analyse your meeting with Octogen
+                            <br/>
+                            Powered By Assembly AI
+                        </p>
+                        <div className="mt-6">
+                            <Button
+                                disabled={isUploading}
+                            >
+                                <Upload className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+                                Upload Meeting
+                            </Button>
+                        </div>
+                    </>
+                ) : (
+                    <div>
+                        <p className="text-sm text-gray-500 text-center">Uploading your meeting...</p>
+                    </div>
+                )}
+            </Card>
+        </motion.div>
     )
 }

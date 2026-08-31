@@ -1,3 +1,5 @@
+import IssuesList from "./issues-list"
+
 type Props = {
     params: Promise<{
         meetingId: string
@@ -6,12 +8,7 @@ type Props = {
 
 const MeetingDetailsPage = async ({ params }: Props) => {
     const { meetingId } = await params
-    return (
-        <div>
-            <h1>Meeting Details</h1>
-            <p>Meeting ID: {meetingId}</p>
-        </div>
-    )
+    return <IssuesList meetingId={meetingId} />
 }
 
 export default MeetingDetailsPage
