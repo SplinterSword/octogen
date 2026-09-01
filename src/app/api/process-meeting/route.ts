@@ -17,10 +17,14 @@ export async function POST(req: NextRequest) {
     if (!userId) {
         return new Response("Unauthorized", { status: 401 })
     }
+
+    let meetingId: string | null = null
     
     try {
         const body = await req.json()
-        const { meetingUrl, meetingId } = bodyParser.parse(body)
+        const parsed = bodyParser.parse(body)
+        meetingId = parsed.meetingId
+        const { meetingUrl } = parsed
         const { summaries } = await processMeeting(meetingUrl)
         await db.issue.createMany({
             data: summaries.map((summary) => ({
@@ -29,11 +33,11 @@ export async function POST(req: NextRequest) {
                 gist: summary.gist,
                 headline: summary.headline,
                 summary: summary.summary,
-                meetingId,
+                meetingId: meetingId!,
             })),
         })
         await db.meeting.update({
-            where: { id: meetingId },
+            where: { id: meetingId! },
             data: { 
                 status: "COMPLETED",
                 name: summaries[0]?.headline || "Meeting"
@@ -42,6 +46,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true }, { status: 200 })
     } catch (error) {
         console.error("Error processing meeting:", error)
+        if (meetingId) {
+            await db.meeting.update({
+                where: { id: meetingId },
+                data: { status: "FAILED" },
+            }).catch(() => {})
+        }
         return new Response("Internal Server Error", { status: 500 })
     }
 }

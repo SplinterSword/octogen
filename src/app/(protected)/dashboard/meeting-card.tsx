@@ -29,7 +29,19 @@ export default function MeetingCard() {
                     projectId: data.projectId,
                 }),
             })
+            if (!response.ok) {
+                const error = await response.json()
+                throw new Error(error.message || "Failed to process meeting")
+            }
             return response.json()
+        },
+        onError: async (error, variables) => {
+            console.error("Meeting processing failed:", error)
+            await fetch("/api/update-meeting-status", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ meetingId: variables.meetingId, status: "FAILED" }),
+            })
         },
     })
     const [isUploading, setIsUploading] = useState(false)
@@ -75,14 +87,23 @@ export default function MeetingCard() {
             if (!response.ok) throw new Error(result.message || "Failed to create meeting record")
 
             toast.success("Meeting uploaded successfully")
-            router.push(`/meetings`)
             refetch()
 
-            processMeeting.mutateAsync({
-                meetingUrl: result.meetingUrl,
-                meetingId: result.meeting.id,
-                projectId: project?.id,
-            })
+            try {
+                await processMeeting.mutateAsync({
+                    meetingUrl: result.meetingUrl,
+                    meetingId: result.meeting.id,
+                    projectId: project?.id,
+                })
+                toast.success("Meeting processed successfully")
+                router.push(`/meetings`)
+            } catch (processError) {
+                console.error("Processing error:", processError)
+                toast.error("Meeting uploaded but processing failed", {
+                    description: "The meeting was saved but transcription failed. Check the meetings page for status."
+                })
+                router.push(`/meetings`)
+            }
         } catch (error: any) {
             console.error("Upload error:", error)
             toast.error("Failed to upload meeting", {
