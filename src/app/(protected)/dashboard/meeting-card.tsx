@@ -30,10 +30,13 @@ export default function MeetingCard() {
                 }),
             })
             if (!response.ok) {
-                const error = await response.json()
-                throw new Error(error.message || "Failed to process meeting")
+                const text = await response.text()
+                let data: any
+                try { data = JSON.parse(text) } catch { data = { message: text } }
+                throw new Error(data.message || "Failed to process meeting")
             }
-            return response.json()
+            const text = await response.text()
+            return JSON.parse(text)
         },
         onError: async (error, variables) => {
             console.error("Meeting processing failed:", error)
@@ -82,7 +85,9 @@ export default function MeetingCard() {
                     name: file.name,
                 }),
             })
-            const result = await response.json()
+            const responseText = await response.text()
+            let result: any
+            try { result = JSON.parse(responseText) } catch { result = { message: responseText } }
 
             if (!response.ok) throw new Error(result.message || "Failed to create meeting record")
 

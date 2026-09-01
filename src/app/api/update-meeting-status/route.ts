@@ -24,6 +24,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: true }, { status: 200 })
     } catch (error) {
         console.error("Update meeting status error:", error)
-        return new Response("Internal Server Error", { status: 500 })
+        return NextResponse.json(
+            { message: error instanceof Error ? error.message : "Internal Server Error" },
+            { status: 500 }
+        )
     }
 }
