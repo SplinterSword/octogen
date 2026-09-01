@@ -156,6 +156,11 @@ export const projectRouter = createTRPCRouter({
             meetingId: z.string(),
         })
     ).mutation(async ({ctx, input}) => {
+        await ctx.db.issue.deleteMany({
+            where: {
+                meetingId: input.meetingId,
+            }
+        })
         const meeting = await ctx.db.meeting.delete({
             where: {
                 id: input.meetingId,

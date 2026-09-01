@@ -41,18 +41,38 @@ export default function MeetingCard() {
         if (!file) return
         setIsUploading(true)
         try {
-            const formData = new FormData()
-            formData.append("file", file)
-            formData.append("projectId", project?.id)
-            formData.append("name", file.name)
+            // Upload file directly to AssemblyAI from client
+            const uploadResponse = await fetch("https://api.assemblyai.com/v2/upload", {
+                method: "POST",
+                headers: {
+                    "authorization": process.env.NEXT_PUBLIC_ASSEMBLY_AI_API_KEY!,
+                    "Content-Type": "application/octet-stream",
+                },
+                body: file,
+            })
 
+            if (!uploadResponse.ok) {
+                const errorText = await uploadResponse.text()
+                throw new Error(`AssemblyAI upload failed: ${errorText}`)
+            }
+
+            const { upload_url } = await uploadResponse.json()
+
+            // Create meeting record with upload URL
             const response = await fetch("/api/upload-meeting", {
                 method: "POST",
-                body: formData,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    uploadUrl: upload_url,
+                    projectId: project?.id,
+                    name: file.name,
+                }),
             })
             const result = await response.json()
 
-            if (!response.ok) throw new Error(result.message || "Upload failed")
+            if (!response.ok) throw new Error(result.message || "Failed to create meeting record")
 
             toast.success("Meeting uploaded successfully")
             router.push(`/meetings`)

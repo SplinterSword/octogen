@@ -16,10 +16,10 @@ function IssueCard({ issue }: { issue: NonNullable<RouterOutputs["project"]["get
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+                <DialogContent aria-describedby={`issue-description-${issue.id}`}>
                     <DialogHeader>
                         <DialogTitle>{issue.gist}</DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription id={`issue-description-${issue.id}`}>
                             {issue.createdAt?.toLocaleString()}
                         </DialogDescription>
                         <p className="text-gray-600">

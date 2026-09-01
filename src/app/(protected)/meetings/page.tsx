@@ -74,6 +74,11 @@ const MeetingPage = () => {
                                         onSuccess: () => {
                                             toast.success('Meeting deleted successfully');
                                             refetch();
+                                        },
+                                        onError: (error) => {
+                                            toast.error('Failed to delete meeting', {
+                                                description: error.message
+                                            });
                                         }
                                     }
                                 )
