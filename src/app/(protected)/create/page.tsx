@@ -71,7 +71,7 @@ const CreatePage = () => {
                         <div className='h-2'></div>
                         <Input {...register('repoUrl', { required: true })} placeholder='Github Repository URL' />
                         <div className='h-2'></div>
-                        <Input {...register('githubToken')} placeholder='Github Token (optional)' />
+                        <Input {...register('githubToken')} placeholder='Github Token (Required for Private Repos)' />
                         <div className='h-4'></div>
 
                         {!!checkCredits.data && (

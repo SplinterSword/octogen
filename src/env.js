@@ -12,6 +12,10 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     ASSEMBLY_AI_API_KEY: z.string().min(1),
+    GITHUB_TOKEN: z.string().optional(),
+    // Legacy alias — prefer GITHUB_TOKEN; kept for backwards compat with github-loader
+    GITHUB_PERSONAL_ACCESS_TOKEN: z.string().optional(),
+    ENCRYPTION_KEY: z.string().optional(),
   },
 
   /**
@@ -32,6 +36,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     ASSEMBLY_AI_API_KEY: process.env.ASSEMBLY_AI_API_KEY,
     NEXT_PUBLIC_ASSEMBLY_AI_API_KEY: process.env.NEXT_PUBLIC_ASSEMBLY_AI_API_KEY,
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    GITHUB_PERSONAL_ACCESS_TOKEN: process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

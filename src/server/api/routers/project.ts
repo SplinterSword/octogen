@@ -2,6 +2,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { pullCommits } from "@/lib/github";
 import { checkCredits, indexGithubRepo } from "@/lib/github-loader";
+import { encryptToken } from "@/lib/encryption";
 
 export const projectRouter = createTRPCRouter({
     create: protectedProcedure.input(
@@ -31,10 +32,14 @@ export const projectRouter = createTRPCRouter({
             throw new Error("Not enough credits")
         }
 
+        const sanitizedToken = input.githubToken?.trim() ? input.githubToken.trim() : null;
+        const encryptedToken = sanitizedToken ? encryptToken(sanitizedToken) : null;
+
         const project = await ctx.db.project.create({
             data: {
                 name: input.name,
                 githubUrl: input.githubUrl,
+                githubToken: encryptedToken,
                 userToProjects: {
                     create: {
                         userId: ctx.user.userId!,
@@ -42,16 +47,26 @@ export const projectRouter = createTRPCRouter({
                 }
             }
         })
-        await indexGithubRepo(project.id, project.githubUrl, input.githubToken)
-        await pullCommits(project.id)
-        await ctx.db.user.update({
-            where: {
-                id: ctx.user.userId!,
-            },
-            data: {
-                credits: { decrement: fileCount }
-            }
-        })
+        try {
+            await indexGithubRepo(project.id, project.githubUrl, sanitizedToken ?? undefined)
+            await pullCommits(project.id, sanitizedToken ?? undefined)
+            await ctx.db.user.update({
+                where: {
+                    id: ctx.user.userId!,
+                },
+                data: {
+                    credits: { decrement: fileCount }
+                }
+            })
+        } catch (error: any) {
+            // Cleanup: avoid leaking empty project when indexing/commit fetch fails
+            // (e.g. private repo without token, invalid token). Credits not deducted.
+            await ctx.db.sourceCodeEmbedding.deleteMany({ where: { projectId: project.id } }).catch(() => {})
+            await ctx.db.commit.deleteMany({ where: { projectId: project.id } }).catch(() => {})
+            await ctx.db.userToProject.deleteMany({ where: { projectId: project.id } }).catch(() => {})
+            await ctx.db.project.delete({ where: { id: project.id } }).catch(() => {})
+            throw error
+        }
         return project
     }),
     getProjects: protectedProcedure.query(async ({ctx}) => {
@@ -63,7 +78,9 @@ export const projectRouter = createTRPCRouter({
                     }
                 },
                 deletedAt: null,
-            }
+            },
+            // never expose stored githubToken to client
+            omit: { githubToken: true }
         })
         return projects
     }),

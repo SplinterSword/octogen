@@ -4,6 +4,38 @@ import { summarizeCode, generateEmbedding } from "./ai-providers";
 import { db } from "@/server/db";
 import { Octokit } from "octokit";
 
+function resolveGithubToken(providedToken?: string): string | undefined {
+    const trimmed = providedToken?.trim();
+    if (trimmed) return trimmed;
+    // Unified env var — support both names for backwards compat
+    return process.env.GITHUB_TOKEN || process.env.GITHUB_PERSONAL_ACCESS_TOKEN || undefined;
+}
+
+function mapGithubError(error: any, githubUrl: string): never {
+    const status = error?.status ?? error?.response?.status;
+    const message: string = error?.message ?? "";
+
+    // 404 from GitHub is ambiguous: repo doesn't exist OR private without auth / insufficient scope
+    if (status === 404) {
+        throw new Error(
+            `Repository not found or is private (${githubUrl}). If it's a private repository, please provide a valid GitHub token with 'repo' access.`
+        );
+    }
+    if (status === 401 || message.toLowerCase().includes("bad credentials")) {
+        throw new Error("Invalid GitHub token. Please check your token and try again.");
+    }
+    if (status === 403) {
+        // Could be rate-limit or forbidden (e.g. token without repo scope on private repo)
+        const isRateLimit = message.toLowerCase().includes("rate limit") || message.toLowerCase().includes("api rate limit");
+        if (isRateLimit) {
+            throw new Error("GitHub API rate limit exceeded. Please try again later or provide a GitHub token to increase limits.");
+        }
+        throw new Error("Access denied to this repository. If it's private, ensure your token has 'repo' scope.");
+    }
+    // Re-throw with original message for debugging
+    throw new Error(error?.message ?? "Failed to access GitHub repository.");
+}
+
 const getFileCount = async (path: string, octokit: Octokit, githubOwner: string, githubRepo: string, acc: number = 0) => {
     const { data } = await octokit.rest.repos.getContent({
         owner: githubOwner,
@@ -39,24 +71,39 @@ const getFileCount = async (path: string, octokit: Octokit, githubOwner: string,
     return acc;
 }
 
+const parseGithubRepoForLoader = (githubUrl: string): { owner: string; repo: string } | null => {
+    try {
+        const pathname = new URL(githubUrl.replace(/\.git$/, "")).pathname;
+        const [owner, repo] = pathname.split("/").filter(Boolean);
+        if (!owner || !repo) return null;
+        return { owner, repo };
+    } catch {
+        return null;
+    }
+}
+
 export async function checkCredits(githubUrl: string, githubToken?: string) {
+    const token = resolveGithubToken(githubToken);
     const octokit = new Octokit({
-        auth: githubToken || process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
+        auth: token,
     });
 
-    const githubOwner = githubUrl.split("/")[3];
-    const githubRepo = githubUrl.split("/")[4];
-
-    if (!githubOwner || !githubRepo) {
+    const parsed = parseGithubRepoForLoader(githubUrl);
+    if (!parsed) {
         return 0
     }
+    const { owner: githubOwner, repo: githubRepo } = parsed;
 
-    const fileCount = await getFileCount('', octokit, githubOwner, githubRepo, 0)
-
-    return fileCount;
+    try {
+        const fileCount = await getFileCount('', octokit, githubOwner, githubRepo, 0)
+        return fileCount;
+    } catch (error: any) {
+        mapGithubError(error, githubUrl);
+    }
 }
 
 async function loadGithubRepo(githubUrl: string, githubToken?: string) {
+    const token = resolveGithubToken(githubToken);
     const loader = new GithubRepoLoader(
         githubUrl,
         {
@@ -70,12 +117,16 @@ async function loadGithubRepo(githubUrl: string, githubToken?: string) {
             recursive: true,
             unknown: "warn",
             maxConcurrency: 5,
-            accessToken: githubToken || process.env.GITHUB_PERSONAL_ACCESS_TOKEN,
+            accessToken: token,
         }
     );
-    const docs = await loader.load();
-    console.log(docs);
-    return docs;
+    try {
+        const docs = await loader.load();
+        console.log(docs);
+        return docs;
+    } catch (error: any) {
+        mapGithubError(error, githubUrl);
+    }
 }
 
 const generateEmbeddings = async (docs: Document[]) => {

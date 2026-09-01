@@ -37,6 +37,8 @@ model Project {
     
     name String
     githubUrl String
+    // Encrypted/optional per-project token for private repos. Falls back to env GITHUB_TOKEN.
+    githubToken String?
 
     deletedAt DateTime?
     
