@@ -47,7 +47,7 @@ Ask natural language questions about your repository and receive contextual answ
 When a project is created or the dashboard is loaded, Octogen fetches the latest commits from the GitHub API, retrieves their diffs, and generates concise AI summaries. A tiered model selection strategy routes small diffs to fast models (Llama 3.1 8B), medium diffs to larger models (GPT-oss 120B via Groq), and large diffs to Gemini Flash's 1M context window. A fallback chain ensures reliability.
 
 ### 🎙️ Meeting Transcription & Issue Extraction
-Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are uploaded directly to AssemblyAI's temporary storage via `client.files.upload()`, eliminating the need for external storage buckets. Transcription uses AssemblyAI's auto-chaptering feature, and each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps. Works seamlessly on Vercel and other serverless platforms.
+Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are uploaded directly from the browser to AssemblyAI's temporary storage via their REST API, bypassing serverless platform body size limits (Vercel 4.5MB). Transcription uses AssemblyAI's auto-chaptering feature, and each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps.
 
 ### 👥 Team Collaboration
 Invite team members to projects via shareable links (`/join/{projectId}`). All team members can view the same commit history, ask questions, and access meeting transcripts. Team member avatars are displayed on the dashboard.
@@ -98,6 +98,7 @@ flowchart TB
     UI --> TRPC_C --> TRPC_S --> PG
     UI --> SA --> Gemini
     SA --> PG
+    UI --> Assembly
     API --> Assembly
     API --> PG
     TRPC_S --> GH
@@ -343,7 +344,8 @@ The app will be available at `http://localhost:3000`.
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ❌ | Firebase messaging sender ID (deprecated, not used by meeting feature) |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | ❌ | Firebase app ID (deprecated, not used by meeting feature) |
 | `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | ❌ | Firebase analytics measurement ID (deprecated, not used by meeting feature) |
-| `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for meeting upload + transcription |
+| `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for server-side transcription |
+| `NEXT_PUBLIC_ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key exposed to client for direct file upload (same value as ASSEMBLY_AI_API_KEY) |
 | `STRIPE_SECRET_KEY` | ✅ | Stripe secret key for payment processing |
 | `STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe publishable key |
 | `STRIPE_WEBHOOK_SECRET` | ✅ | Stripe webhook signing secret |
@@ -482,6 +484,22 @@ typescript: { ignoreBuildErrors: true }
 #### Lessons Learned
 While this is a pragmatic short-term solution, the proper fix is to resolve all type errors and lint violations. These flags should be removed once the codebase is fully type-safe.
 
+### Challenge 5: Vercel 413 Error on Meeting Upload
+
+#### Problem
+Meeting file uploads failed with HTTP 413 "Payload Too Large" when using the server-side upload route, despite AssemblyAI supporting files up to 50MB.
+
+#### Root Cause
+Vercel's Hobby plan enforces a 4.5MB serverless function body size limit. The original implementation sent the entire audio file through a Next.js API route (`/api/upload-meeting`) which used `FormData` to receive the file and forward it to AssemblyAI. Any file larger than 4.5MB exceeded this limit.
+
+#### Solution
+Moved the file upload to happen directly from the browser to AssemblyAI's REST API (`https://api.assemblyai.com/v2/upload`). The server now only receives the small `upload_url` (a few hundred bytes) in JSON format, bypassing the body size limit entirely. The API key is exposed client-side via `NEXT_PUBLIC_ASSEMBLY_AI_API_KEY` (acceptable for showcase purposes).
+
+#### Lessons Learned
+- Serverless platforms have hard body size limits that cannot be increased on free/hobby tiers
+- Client-side direct uploads to storage providers (S3, AssemblyAI, etc.) are the standard pattern for large files in serverless architectures
+- Exposing API keys client-side is acceptable when the key is time-limited or for showcase purposes — revoke after demo
+
 ---
 
 ## Limitations
@@ -489,7 +507,7 @@ While this is a pragmatic short-term solution, the proper fix is to resolve all 
 - **Single-branch indexing:** Only the `main` branch is indexed. Other branches are not supported.
 - **No incremental re-indexing:** When a repository is updated, there is no mechanism to re-index only the changed files. The entire repository must be re-created.
 - **No real-time sync:** Commit summaries are fetched on dashboard load, not via webhooks. There can be a delay before new commits appear.
-- **Meeting file size limit:** Audio uploads are capped at 50MB (AssemblyAI upload limit).
+- **Meeting file size limit:** Audio uploads are capped at 50MB (AssemblyAI limit). Vercel's 4.5MB serverless body limit is bypassed by uploading directly from the browser to AssemblyAI.
 - **Build-time type safety disabled:** TypeScript and ESLint errors are currently ignored during production builds (`next.config.js`).
 - **No test suite:** The project currently has no automated tests.
 - **Hardcoded branch name:** The GitHub loader always clones from `main`, which will fail for repositories using `master` or other default branch names.
