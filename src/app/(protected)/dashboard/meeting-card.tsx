@@ -91,6 +91,7 @@ export default function MeetingCard() {
 
             if (!response.ok) throw new Error(result.message || "Failed to create meeting record")
 
+            setIsUploading(false)
             toast.success("Meeting uploaded successfully")
             refetch()
 
