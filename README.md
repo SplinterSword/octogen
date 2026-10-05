@@ -10,7 +10,7 @@ Octogen is a full-stack web application that connects to GitHub repositories, in
 
 ---
 
-## Why I Built This
+## Motivation
 
 Understanding a new codebase is one of the most time-consuming tasks in software development. Whether you're onboarding onto a team, reviewing a pull request, or trying to trace a bug through unfamiliar code, you spend more time reading and searching than actually writing code.
 
@@ -337,13 +337,6 @@ The app will be available at `http://localhost:3000`.
 | `GITHUB_TOKEN` | ✅ | GitHub Personal Access Token for API access |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | ✅ | Google AI API key for Gemini models and embeddings |
 | `GROQ_API_KEY` | ✅ | Groq API key for fast inference models |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | ❌ | Firebase project API key (deprecated, not used by meeting feature) |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | ❌ | Firebase auth domain (deprecated, not used by meeting feature) |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | ❌ | Firebase project ID (deprecated, not used by meeting feature) |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | ❌ | Firebase Storage bucket (deprecated, not used by meeting feature) |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ❌ | Firebase messaging sender ID (deprecated, not used by meeting feature) |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | ❌ | Firebase app ID (deprecated, not used by meeting feature) |
-| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | ❌ | Firebase analytics measurement ID (deprecated, not used by meeting feature) |
 | `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for server-side transcription |
 | `NEXT_PUBLIC_ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key exposed to client for direct file upload (same value as ASSEMBLY_AI_API_KEY) |
 | `STRIPE_SECRET_KEY` | ✅ | Stripe secret key for payment processing |
@@ -550,32 +543,6 @@ The project includes Vercel detection in the tRPC client (`process.env.VERCEL_UR
 - PostgreSQL database with pgvector extension (e.g., Supabase, Neon, or self-hosted)
 - All environment variables configured in the hosting platform
 - Stripe webhook endpoint registered: `{APP_URL}/api/webhook/stripe`
-
-### CI/CD
-
-Not currently documented. No CI/CD configuration files (GitHub Actions, etc.) were found in the repository.
-
----
-
-## Testing
-
-No automated test suite currently exists. The project does not include any test files, test configuration, or testing dependencies.
-
-### Manual verification
-
-```bash
-# Type checking
-bun run typecheck
-
-# Linting
-bun run lint
-
-# Format checking
-bun run format:check
-
-# Full check (lint + typecheck)
-bun run check
-```
 
 ### Database inspection
 
