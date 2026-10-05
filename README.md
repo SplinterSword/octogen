@@ -20,23 +20,9 @@ I built Octogen to bridge that gap: an AI assistant that actually understands *y
 
 ---
 
-## Problem Being Solved
+## Quick Start
 
-**The real-world problem:** Developers waste significant time navigating unfamiliar codebases, deciphering commit messages that lack context, and extracting action items from long meetings.
-
-**Target users:** Software engineers — especially those onboarding onto new projects, working across multiple repositories, or collaborating in teams.
-
-**Before Octogen:**
-1. Search through files manually or use keyword-based search tools
-2. Read commit diffs line-by-line to understand what changed and why
-3. Re-watch or re-listen to entire meetings to find specific discussion points
-
-**With Octogen:**
-1. Ask "Which file handles user authentication?" and get a direct answer with source code references
-2. See AI-generated summaries for every commit — what changed and why
-3. Upload a meeting recording and get auto-extracted issues with timestamps
-
----
+[Live Link](https://octogen-rouge.vercel.app/)
 
 ## Features
 
