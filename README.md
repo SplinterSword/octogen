@@ -5,8 +5,6 @@ Ask your repo anything — AI answers grounded in your actual code, not guesses.
 ![Octogen demo](docs/demo.gif)
 <!-- Replace docs/demo.gif with real recording: create project, ask a question, upload a meeting -->
 
----
-
 ## What is this?
 
 You know that feeling? You join a new repo — 800 files, no docs, last commit says `fix stuff` — and you spend three days `scan`-ing just to find where auth actually happens. Octogen fixes that.
