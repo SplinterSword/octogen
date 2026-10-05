@@ -1,575 +1,175 @@
 # Octogen
 
-An AI-powered GitHub repository intelligence platform that helps developers understand codebases through natural language Q&A, automated commit summarization, and meeting transcription analysis.
+Ask your repo anything — AI answers grounded in your actual code, not guesses.
+
+![Octogen demo](docs/demo.gif)
+<!-- Replace docs/demo.gif with real recording: create project, ask a question, upload a meeting -->
 
 ---
 
-## Short Description
+## What is this?
 
-Octogen is a full-stack web application that connects to GitHub repositories, indexes their source code using vector embeddings, and provides an AI-powered question-answering interface. Developers can ask natural language questions about any connected codebase and receive contextual answers grounded in the actual source code. It also summarizes commit history using AI and transcribes meeting recordings into structured, searchable issues.
+You know that feeling? You join a new repo — 800 files, no docs, last commit says `fix stuff` — and you spend three days `scan`-ing just to find where auth actually happens. Octogen fixes that.
 
----
+Octogen is three small pieces that work together:
+
+1. **A Next.js app** (`src/`) — dashboard for Q&A, commits, meetings, and billing.
+2. **Postgres + pgvector** — stores per-file AI summaries + 768-dim embeddings.
+3. **AI services** — Gemini for answers/embeddings, Groq for commit diffs, AssemblyAI for meeting transcripts.
+
+The trick is simple: paste a GitHub URL and Octogen clones it, summarizes every file, and embeds it. Then every question is vector search → grounded answer. So `https://github.com/you/my-api` + `Where is auth handled?` returns the real files, for every teammate on the same project.
+
+         Think ChatGPT, but with your codebase.
 
 ## Motivation
 
-Understanding a new codebase is one of the most time-consuming tasks in software development. Whether you're onboarding onto a team, reviewing a pull request, or trying to trace a bug through unfamiliar code, you spend more time reading and searching than actually writing code.
+Repo knowledge is lost on every fresh clone — `grep` finds text, not meaning, and chatbots don't know your code, so teams re-find the same entrypoints and re-explain the layout for each new hire.
 
-Existing tools like GitHub's built-in search or `grep` are keyword-based — they find text matches, not semantic meaning. AI chatbots like ChatGPT can answer coding questions, but they don't have access to your specific repository's context.
+- Shared context: one indexed project, same answers for the whole team.
+- Faster onboarding: clone logic — ask `how does billing work?` instead of reading 50 files.
+- Stay in flow: streamed answers with file references instead of tab-hopping.
 
-I built Octogen to bridge that gap: an AI assistant that actually understands *your* codebase, not just general programming knowledge.
+## 🚀 Quick Start
 
----
+First visit this link: [https://octogen-rouge.vercel.app/](https://octogen-rouge.vercel.app/)
 
-## Quick Start
+No install needed — just a browser and a GitHub repo URL. For private repos, have a GitHub token ready.
 
-[Live Link](https://octogen-rouge.vercel.app/)
+### 1. Sign in
 
-## Features
+Open the live link above → Sign up / Sign in via Clerk → you'll land on `/dashboard`.
 
-### 🔍 AI-Powered Codebase Q&A (RAG Pipeline)
-Ask natural language questions about your repository and receive contextual answers backed by actual source code. The system uses Retrieval-Augmented Generation (RAG): questions are embedded into vectors, matched against indexed source code embeddings via cosine similarity, and the most relevant files are fed as context to Gemini 2.5 Flash for answer generation. Answers stream in real-time and display the referenced source files with syntax-highlighted code.
+### 2. Create a project
 
-### 📝 Intelligent Commit Summarization
-When a project is created or the dashboard is loaded, Octogen fetches the latest commits from the GitHub API, retrieves their diffs, and generates concise AI summaries. A tiered model selection strategy routes small diffs to fast models (Llama 3.1 8B), medium diffs to larger models (GPT-oss 120B via Groq), and large diffs to Gemini Flash's 1M context window. A fallback chain ensures reliability.
+- Go to `/create` → project name + GitHub repository URL (+ optional token for private repos)
+- Check the credit cost before confirming (`1 file = 1 credit`, you start with `150` free)
+- Confirm → Octogen indexes the repo (summarize + embed each file)
 
-### 🎙️ Meeting Transcription & Issue Extraction
-Upload audio recordings of meetings (MP3, WAV, M4A, AAC, FLAC up to 50MB). Files are uploaded directly from the browser to AssemblyAI's temporary storage via their REST API, bypassing serverless platform body size limits (Vercel 4.5MB). Transcription uses AssemblyAI's auto-chaptering feature, and each chapter is extracted as a structured issue with a headline, summary, gist, and timestamps.
+### 3. Ask and browse commits
 
-### 👥 Team Collaboration
-Invite team members to projects via shareable links (`/join/{projectId}`). All team members can view the same commit history, ask questions, and access meeting transcripts. Team member avatars are displayed on the dashboard.
+- Stay on `/dashboard` → ask `Where is auth handled?` → streamed answer with referenced files
+- Save useful answers to `/qa` for the team
+- Scroll to see the latest 15 commits with AI summaries
 
-### 💳 Credit-Based Usage System
-Each file in a repository costs one credit to index. Users start with 150 free credits. Additional credits can be purchased via Stripe Checkout at a rate of $2 per 100 credits. The billing page shows current credit balance and provides a slider to select purchase amounts.
+### 4. Meetings, team, and credits
+
+- `/meetings` — drop an audio file (MP3/WAV/M4A/AAC/FLAC, up to 50MB) → chapters become issues
+- `/join/[projectId]` — share the invite link so teammates get the same project
+- `/billing` — check balance, move the slider to buy more (`$2 per 100 credits`)
+
+See `## Usage` below for the daily loop. Want to run it locally instead? See `## 🤝 Contributing`.
+
+## Usage
+
+Available pages (all under `(protected)/` — sign-in required):
+
+- `/dashboard` — ask questions, browse latest 15 commits with AI summaries, see team avatars
+- `/qa` — saved Q&A history for the team
+- `/meetings` — drag-and-drop audio (MP3/WAV/M4A/AAC/FLAC, up to 50MB), auto-chapters become issues
+- `/create` — new project from a GitHub URL, shows file-count cost before indexing
+- `/billing` — credit balance + slider to buy (`$2 per 100 credits`)
+- `/join/[projectId]` — shareable invite link, teammates get the same commits / Q&A / meetings
+
+Behavior notes:
+
+- Indexing is per-project and costs `1 credit per file` — you start with `150` free.
+- Only the `main` branch is indexed. No incremental re-index yet — updates need a re-create.
+- Commits are pulled on dashboard load, not via webhooks.
+- Meeting upload goes browser → AssemblyAI directly, so Vercel's 4.5MB limit doesn't bite.
 
 > [!NOTE]
-> **Test Environment:** The Stripe integration is currently running in test mode to showcase the checkout functionality. No real payments will be processed. Please use [Stripe test cards](https://stripe.com/docs/testing) if you would like to test the checkout flow.
+> **Test Environment:** Stripe is in test mode. No real payments are processed. Use [Stripe test cards](https://stripe.com/docs/testing) to try checkout.
 
-### 📂 Project Management
-Create, switch between, and archive projects from the sidebar. Each project is linked to a GitHub repository URL. Soft-delete (archive) support allows projects to be hidden without data loss.
+## Examples
 
----
+Ask about the codebase:
 
-## Architecture Overview
-
-```mermaid
-flowchart TB
-    subgraph Client["Frontend (Next.js App Router)"]
-        UI["React UI + shadcn/ui"]
-        TRPC_C["tRPC Client"]
-        RQ["TanStack React Query"]
-    end
-
-    subgraph Server["Backend (Next.js Server)"]
-        TRPC_S["tRPC Server"]
-        SA["Server Actions"]
-        API["REST API Routes"]
-    end
-
-    subgraph AI["AI Services"]
-        Groq["Groq API\n(Llama 8B / GPT-oss 120B)"]
-        Gemini["Google Gemini\n(2.5 Flash + Embeddings)"]
-        Assembly["AssemblyAI\n(Upload + Transcription)"]
-    end
-
-    subgraph Data["Data Layer"]
-        PG["PostgreSQL + pgvector"]
-    end
-
-    subgraph External["External Services"]
-        GH["GitHub API"]
-        Clerk["Clerk Auth"]
-        Stripe["Stripe Payments"]
-    end
-
-    UI --> TRPC_C --> TRPC_S --> PG
-    UI --> SA --> Gemini
-    SA --> PG
-    UI --> Assembly
-    API --> Assembly
-    API --> PG
-    TRPC_S --> GH
-    TRPC_S --> Gemini
-    TRPC_S --> Groq
-    Clerk --> UI
-    Clerk --> TRPC_S
-    Stripe --> API
+```text
+Dashboard > Ask: "Where is auth handled and how does the session flow work?"
+-> streamed markdown answer + referenced files with syntax-highlighted code
+-> Save to /qa for the team
 ```
 
-### How the RAG Pipeline Works
+Turn a standup into issues:
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant FE as Frontend
-    participant SA as Server Action
-    participant Gemini as Gemini API
-    participant DB as PostgreSQL + pgvector
-
-    U->>FE: Types question
-    FE->>SA: askQuestion(question, projectId)
-    SA->>Gemini: generateEmbedding(question)
-    Gemini-->>SA: query vector [768 dims]
-    SA->>DB: Cosine similarity search (threshold > 0.5, limit 10)
-    DB-->>SA: Matching source code + summaries
-    SA->>Gemini: streamText(context + question)
-    Gemini-->>SA: Streamed response chunks
-    SA-->>FE: StreamableValue (real-time)
-    FE-->>U: Rendered markdown answer + code references
+```text
+/meetings > drop standup.mp3 > auto-transcribe
+-> chapters become issues: headline + summary + gist + start/end
 ```
 
----
+Invite and top up:
 
-## Tech Stack
-
-### Frontend
-| Technology | Purpose |
-|---|---|
-| **Next.js 15** (App Router + Turbopack) | React framework with server components, server actions, and file-based routing |
-| **React 19** | UI library |
-| **Tailwind CSS 4** | Utility-first styling |
-| **shadcn/ui** (Radix primitives) | Pre-built accessible UI components |
-| **Framer Motion** | Page transitions, staggered animations, floating dock |
-| **React Syntax Highlighter** | Code display in Q&A answers (Lucario theme) |
-| **Sonner** | Toast notifications |
-| **React Dropzone** | Drag-and-drop file upload for meetings |
-| **React Circular Progressbar** | Upload progress visualization |
-
-### Backend
-| Technology | Purpose |
-|---|---|
-| **tRPC v11** | End-to-end typesafe API layer with React Query integration |
-| **Zod** | Runtime schema validation for all API inputs |
-| **SuperJSON** | Serialization of complex types (dates, etc.) across tRPC |
-| **@t3-oss/env-nextjs** | Type-safe environment variable validation |
-
-### Database
-| Technology | Purpose |
-|---|---|
-| **PostgreSQL** | Primary relational database |
-| **Prisma ORM v6** | Schema management, migrations, and type-safe queries |
-| **pgvector** | Vector similarity search for source code embeddings |
-
-### AI / ML
-| Technology | Purpose |
-|---|---|
-| **Vercel AI SDK** | Unified interface for text generation, streaming, and embeddings |
-| **Google Gemini 2.5 Flash** | Primary LLM for Q&A, code summarization, and large diff analysis |
-| **Gemini Embedding 001** | 768-dimensional embeddings for source code indexing |
-| **Groq** (Llama 3.1 8B / GPT-oss 120B) | Fast inference for small/medium commit diffs |
-| **LangChain** | GitHub repository loading and document splitting |
-| **js-tiktoken** | Token counting for intelligent model routing |
-| **AssemblyAI** | Audio upload + transcription with auto-chaptering |
-
-### Authentication
-| Technology | Purpose |
-|---|---|
-| **Clerk** | User authentication, session management, middleware protection |
-
-### Payments
-| Technology | Purpose |
-|---|---|
-| **Stripe** | Credit purchase checkout sessions and webhook handling |
-
-### Infrastructure
-| Technology | Purpose |
-|---|---|
-| **Docker / Podman** | Local PostgreSQL database via `start-database.sh` |
-| **Bun** | Package manager (lockfile: `bun.lock`) |
-
----
-
-## Project Structure
-
-```
-octogen/
-├── prisma/
-│   └── schema.prisma            # Database schema (User, Project, Commit, Embedding, Meeting, Issue, StripeTransaction)
-├── public/
-│   ├── octogen-logo.svg         # App logo
-│   └── undraw.github.svg        # Illustration for create project page
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx           # Root layout (Clerk, tRPC, Toaster providers)
-│   │   ├── page.tsx             # Root redirect → /dashboard
-│   │   ├── sync-user/           # Post-signup user sync (Clerk → Prisma)
-│   │   ├── sign-in/             # Clerk sign-in page
-│   │   ├── sign-up/             # Clerk sign-up page
-│   │   ├── api/
-│   │   │   ├── trpc/            # tRPC HTTP handler
-│   │   │   ├── upload-meeting/  # AssemblyAI upload + Meeting creation
-│   │   │   ├── process-meeting/ # Meeting transcription endpoint (AssemblyAI)
-│   │   │   └── webhook/stripe/  # Stripe webhook for credit fulfillment
-│   │   ├── _components/
-│   │   │   └── app-sidebar.tsx  # Main sidebar (project list, billing nav)
-│   │   └── (protected)/         # Auth-guarded route group
-│   │       ├── layout.tsx       # Sidebar + top bar + floating nav layout
-│   │       ├── dashboard/       # Main project dashboard (Q&A, commits, meetings)
-│   │       ├── qa/              # Saved Q&A history page
-│   │       ├── meetings/        # Meeting list + detail/issues view
-│   │       ├── create/          # Create new project form
-│   │       ├── billing/         # Credit purchase page
-│   │       └── join/[projectId] # Team invite handler
-│   ├── components/
-│   │   ├── octogen-logo.tsx     # SVG logo component
-│   │   └── ui/                  # shadcn/ui primitives (button, card, dialog, etc.)
-│   ├── hooks/
-│   │   ├── use-projects.ts      # Active project selection (localStorage)
-│   │   ├── use-refetch.ts       # Global query invalidation helper
-│   │   └── use-mobile.ts       # Responsive breakpoint detection
-│   ├── lib/
-│   │   ├── ai-providers.ts     # AI model config, tiered selection, fallback chain
-│   │   ├── github.ts           # Commit fetching + AI summarization pipeline
-│   │   ├── github-loader.ts    # Repo indexing: load files → summarize → embed → store
-│   │   ├── commit-helpers.ts   # Token counting, truncation, diff filtering
-│   │   ├── assembly.ts         # AssemblyAI upload + transcription + chapter extraction
-│   │   ├── stripe.ts           # Stripe checkout session creation
-│   │   └── utils.ts            # cn() utility (clsx + tailwind-merge)
-│   ├── server/
-│   │   ├── db.ts               # Prisma client singleton
-│   │   └── api/
-│   │       ├── trpc.ts         # tRPC context, middleware (auth, timing)
-│   │       ├── root.ts         # Root router (post + project)
-│   │       └── routers/
-│   │           ├── project.ts  # All project CRUD, commits, Q&A, meetings, billing
-│   │           └── post.ts     # Scaffold router (from create-t3-app)
-│   ├── trpc/                   # tRPC client setup (React provider, server caller)
-│   ├── styles/globals.css      # Global styles + Tailwind config
-│   ├── env.js                  # Environment variable schema validation
-│   └── middleware.ts           # Clerk auth middleware (protects all non-public routes)
-├── start-database.sh           # Docker/Podman PostgreSQL launcher
-├── package.json
-├── components.json             # shadcn/ui configuration
-└── tsconfig.json
+```text
+Share: https://octogen-rouge.vercel.app/join/<projectId>
+Billing: move slider to 300 credits -> Stripe Checkout -> credits added via webhook
 ```
 
----
+## What's in the repo?
 
-## Installation
+```
+prisma/
+  schema.prisma           → User, Project, Commit, SourceCodeEmbedding (vector(768)), Meeting, Issue
+src/
+  app/(protected)/        → dashboard/, qa/, meetings/, create/, billing/, join/[projectId]/
+  app/api/                → trpc/, upload-meeting/, process-meeting/, webhook/stripe/
+  lib/                    → github.ts, github-loader.ts, ai-providers.ts, assembly.ts, stripe.ts
+  server/api/routers/     → project.ts (CRUD, commits, Q&A, meetings, billing)
+  hooks/                  → use-projects.ts, use-refetch.ts
+  env.js                  → type-safe env validation
+start-database.sh         → Docker/Podman Postgres launcher
+Technical_Documentation.md → architecture, RAG flow, decisions, challenges, limits, deployment
+```
 
-### Prerequisites
+## For more technical info
 
-- **Node.js** ≥ 18
-- **Bun** (recommended) or npm/yarn/pnpm
-- **Docker** or **Podman** (for local PostgreSQL)
-- **PostgreSQL** with the `pgvector` extension enabled
+Skipping the deep dive here on purpose. For architecture diagrams, RAG pipeline, tiered models, pgvector setup, challenges, and deployment — checkout `Technical_Documentation.md`.
 
-### 1. Clone the repository
+## 🤝 Contributing
+
+### Clone the repo
 
 ```bash
 git clone https://github.com/SplinterSword/octogen.git
 cd octogen
 ```
 
-### 2. Install dependencies
+### Local dev
+
+Prereqs: Node.js 18+, Bun, Docker or Podman, plus keys for Clerk / GitHub / Gemini / Groq / AssemblyAI / Stripe.
 
 ```bash
 bun install
-```
-
-### 3. Set up environment variables
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and fill in all required values (see [Environment Variables](#environment-variables) below).
-
-### 4. Start the database
-
-```bash
+cp .env.example .env  # fill in DATABASE_URL + API keys, see below
 chmod +x start-database.sh
 ./start-database.sh
-```
-
-This script will:
-- Detect Docker or Podman
-- Check if the port is available
-- Optionally generate a random password if using the default
-- Start a PostgreSQL container named `octogen-postgres`
-
-### 5. Push the database schema
-
-```bash
 bunx prisma db push
-```
-
-### 6. Generate the Prisma client
-
-```bash
-bunx prisma generate
-```
-
-### 7. Start the development server
-
-```bash
 bun run dev
 ```
 
-The app will be available at `http://localhost:3000`.
-
----
-
-## Environment Variables
-
-| Variable | Required | Description |
-|---|---|---|
-| `DATABASE_URL` | ✅ | PostgreSQL connection string with pgvector support |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | ✅ | Clerk frontend publishable key |
-| `CLERK_SECRET_KEY` | ✅ | Clerk backend secret key |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | ✅ | Sign-in page path (default: `/sign-in`) |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL` | ✅ | Redirect after sign-in (default: `/dashboard`) |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL` | ✅ | Redirect after sign-up (default: `/dashboard`) |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` | ✅ | Force redirect after sign-up to sync user (default: `/sync-user`) |
-| `GITHUB_TOKEN` | ✅ | GitHub Personal Access Token for API access |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | ✅ | Google AI API key for Gemini models and embeddings |
-| `GROQ_API_KEY` | ✅ | Groq API key for fast inference models |
-| `ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key for server-side transcription |
-| `NEXT_PUBLIC_ASSEMBLY_AI_API_KEY` | ✅ | AssemblyAI API key exposed to client for direct file upload (same value as ASSEMBLY_AI_API_KEY) |
-| `STRIPE_SECRET_KEY` | ✅ | Stripe secret key for payment processing |
-| `STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe publishable key |
-| `STRIPE_WEBHOOK_SECRET` | ✅ | Stripe webhook signing secret |
-| `NEXT_PUBLIC_APP_URL` | ✅ | Application URL (default: `http://localhost:3000`) |
-
----
-
-## Usage
-
-### Typical Workflow
-
-1. **Sign up** — Create an account via Clerk authentication
-2. **Create a project** — Enter a project name, GitHub repository URL, and optional GitHub token
-3. **Check credits** — The system counts files in the repo and shows the credit cost
-4. **Index repository** — Upon confirmation, Octogen clones the repo, summarizes each file with AI, generates vector embeddings, and stores them in PostgreSQL
-5. **Browse commits** — The dashboard shows the latest 15 commits with AI-generated summaries
-6. **Ask questions** — Type a natural language question about the codebase and receive a streamed answer with source code references
-7. **Save answers** — Save useful Q&A pairs for team reference on the Q&A page
-8. **Upload meetings** — Drag and drop an audio file to transcribe and extract issues
-9. **Invite team members** — Share a join link so collaborators can access the same project
-10. **Buy credits** — Purchase additional credits via Stripe when needed
-
----
-
-## Key Technical Decisions
-
-### Tiered AI Model Selection
-**Chosen:** Route requests to different models based on token count (≤1500 → Llama 8B, ≤6000 → GPT-oss 120B, >6000 → Gemini Flash).
-**Why:** Minimizes cost and latency for small requests while maintaining quality for complex ones. Groq provides extremely fast inference for smaller models, while Gemini Flash handles large context windows up to 1M tokens.
-**Tradeoff:** More complex routing logic, but significantly reduces API costs and rate limiting issues.
-
-### Vector Embeddings with pgvector
-**Chosen:** PostgreSQL with pgvector extension for storing 768-dimensional embeddings alongside relational data.
-**Why:** Avoids the operational overhead of a separate vector database (Pinecone, Weaviate) while keeping embeddings co-located with project metadata. Cosine similarity search via `<=>` operator is performant for the expected scale.
-**Tradeoff:** Less optimized for vector-only workloads at massive scale, but simpler architecture.
-
-### tRPC over REST
-**Chosen:** tRPC v11 with React Query for the primary API layer.
-**Why:** End-to-end type safety between client and server without code generation. Automatic inference of input/output types, built-in React Query integration, and SuperJSON serialization for complex types (dates).
-**Alternative:** REST with OpenAPI spec generation would provide broader client compatibility but lose the tight TypeScript integration.
-
-### Server Actions for RAG Streaming
-**Chosen:** Next.js Server Actions with `createStreamableValue` for the Q&A pipeline.
-**Why:** The Vercel AI SDK's RSC integration allows streaming AI responses directly from server actions to client components without setting up WebSocket or SSE endpoints. This provides the most natural React integration for real-time text generation.
-
-### Credit System (1 credit = 1 file)
-**Chosen:** File-count-based credit system rather than token-based or subscription-based.
-**Why:** Simple, predictable, and easy to communicate to users. The file count is checked before indexing by recursively counting files via the GitHub API, allowing users to see the exact cost upfront.
-
-### Clerk for Authentication
-**Chosen:** Clerk over NextAuth or custom JWT.
-**Why:** Provides pre-built UI components, webhook-based user sync, and middleware-level route protection with minimal configuration. The `sync-user` page pattern handles the Clerk-to-database user synchronization on first sign-up.
-
----
-
-## Challenges Faced & Solutions
-
-### Challenge 1: Groq TPM Rate Limiting During Commit Summarization
-
-#### Problem
-When creating a project or pulling commits, summarization frequently failed with Groq tokens-per-minute (TPM) rate limit errors. Large diffs combined with concurrent summarization requests would quickly exhaust the rate limit.
-
-#### Root Cause
-- Large diffs (lock files, build outputs, vendor code) were being sent to the model without filtering
-- All commit summaries were generated concurrently via `Promise.all`, creating burst traffic that exceeded TPM limits
-- No distinction between small and large diffs — all went to the same model
-
-#### Solution
-A multi-layered approach was implemented:
-
-1. **Diff filtering** (`src/lib/commit-helpers.ts`): The `extractMeaningfulDiff` function strips out lock files, `node_modules`, `dist/`, `.next/`, and build artifacts before summarization. Only actual code changes (additions/deletions) are preserved.
-
-2. **Token-based model routing** (`src/lib/ai-providers.ts`): The `selectModel` function routes diffs by token count:
-   - ≤1,500 tokens → Llama 3.1 8B (fast, low TPM usage)
-   - ≤6,000 tokens → GPT-oss 120B (quality for medium diffs)
-   - &gt;6,000 tokens → Gemini Flash (1M context, separate TPM pool)
-
-3. **Automatic fallback** (`generateWithFallback`): If a Groq model hits rate limits, the system automatically falls back to Gemini Flash.
-
-4. **Controlled concurrency** (`src/lib/github.ts`): Commits are processed in batches of 3 using `Promise.allSettled`, preventing burst traffic while still maintaining reasonable throughput.
-
-5. **Binary search truncation** (`truncateToTokenLimit`): An O(log n) binary search algorithm truncates text to fit within token limits, replacing the naive character-by-character approach.
-
-#### Lessons Learned
-- Always filter input data before sending to AI models — removing noise (lock files, build artifacts) dramatically reduces token usage
-- Tiered model selection is more cost-effective than using a single model for all request sizes
-- `Promise.allSettled` is preferable to `Promise.all` for batch AI operations — one failure shouldn't abort the entire batch
-- Having a fallback chain across different API providers adds resilience against any single provider's rate limits
-
-### Challenge 2: Middleware Naming Convention
-
-#### Problem
-The Clerk authentication middleware was not intercepting requests, leaving all routes unprotected.
-
-#### Root Cause
-The middleware file was initially named `proxy.ts` instead of `middleware.ts`. Next.js only recognizes `middleware.ts` (or `middleware.js`) at the `src/` root as the middleware entry point.
-
-#### Solution
-Renamed the file from `src/proxy.ts` to `src/middleware.ts`. The middleware now correctly intercepts all non-public routes and enforces authentication via `auth.protect()`.
-
-#### Lessons Learned
-Next.js conventions are strict — framework-specific files must follow exact naming patterns to be recognized.
-
-### Challenge 3: Prisma Schema Configuration for pgvector
-
-#### Problem
-The initial Prisma schema failed to support vector embeddings, preventing the RAG pipeline from storing and querying source code embeddings.
-
-#### Root Cause
-PostgreSQL extensions (like `pgvector`) require explicit configuration in both the Prisma datasource and generator blocks. The `vector(768)` column type is not natively supported by Prisma and must be declared as `Unsupported`.
-
-#### Solution
-Three changes in `schema.prisma`:
-1. Added `previewFeatures = ["postgresqlExtensions"]` to the generator block
-2. Added `extensions = [vector]` to the datasource block
-3. Declared the embedding column as `Unsupported("vector(768)")?` and used raw SQL (`$executeRaw`) for vector insertion and similarity queries
-
-#### Lessons Learned
-When using PostgreSQL extensions with Prisma, raw SQL is unavoidable for operations on unsupported column types. The `Unsupported` type annotation preserves schema documentation while deferring the actual operations to raw queries.
-
-### Challenge 4: Next.js Build Failures with TypeScript and ESLint
-
-#### Problem
-Production builds failed due to TypeScript errors and ESLint violations that didn't manifest during development.
-
-#### Root Cause
-Next.js runs full TypeScript type checking and ESLint during production builds by default. Development mode with Turbopack is more lenient.
-
-#### Solution
-Added build-time bypass flags in `next.config.js`:
-```js
-eslint: { ignoreDuringBuilds: true },
-typescript: { ignoreBuildErrors: true }
-```
-
-#### Lessons Learned
-While this is a pragmatic short-term solution, the proper fix is to resolve all type errors and lint violations. These flags should be removed once the codebase is fully type-safe.
-
-### Challenge 5: Vercel 413 Error on Meeting Upload
-
-#### Problem
-Meeting file uploads failed with HTTP 413 "Payload Too Large" when using the server-side upload route, despite AssemblyAI supporting files up to 50MB.
-
-#### Root Cause
-Vercel's Hobby plan enforces a 4.5MB serverless function body size limit. The original implementation sent the entire audio file through a Next.js API route (`/api/upload-meeting`) which used `FormData` to receive the file and forward it to AssemblyAI. Any file larger than 4.5MB exceeded this limit.
-
-#### Solution
-Moved the file upload to happen directly from the browser to AssemblyAI's REST API (`https://api.assemblyai.com/v2/upload`). The server now only receives the small `upload_url` (a few hundred bytes) in JSON format, bypassing the body size limit entirely. The API key is exposed client-side via `NEXT_PUBLIC_ASSEMBLY_AI_API_KEY` (acceptable for showcase purposes).
-
-#### Lessons Learned
-- Serverless platforms have hard body size limits that cannot be increased on free/hobby tiers
-- Client-side direct uploads to storage providers (S3, AssemblyAI, etc.) are the standard pattern for large files in serverless architectures
-- Exposing API keys client-side is acceptable when the key is time-limited or for showcase purposes — revoke after demo
-
----
-
-## Limitations
-
-- **Single-branch indexing:** Only the `main` branch is indexed. Other branches are not supported.
-- **No incremental re-indexing:** When a repository is updated, there is no mechanism to re-index only the changed files. The entire repository must be re-created.
-- **No real-time sync:** Commit summaries are fetched on dashboard load, not via webhooks. There can be a delay before new commits appear.
-- **Meeting file size limit:** Audio uploads are capped at 50MB (AssemblyAI limit). Vercel's 4.5MB serverless body limit is bypassed by uploading directly from the browser to AssemblyAI.
-- **Build-time type safety disabled:** TypeScript and ESLint errors are currently ignored during production builds (`next.config.js`).
-- **No test suite:** The project currently has no automated tests.
-- **Hardcoded branch name:** The GitHub loader always clones from `main`, which will fail for repositories using `master` or other default branch names.
-- **Post router is scaffolding:** The `post` tRPC router is leftover from the create-t3-app template and references a non-existent `Post` model.
-- **No rate limiting on API routes:** The meeting processing and webhook endpoints lack application-level rate limiting.
-- **Credit system is unidirectional:** Credits are consumed but never refunded if indexing fails partway through.
-
----
-
-## Deployment
-
-### Build
+Condensed env — full table lives in `Technical_Documentation.md`:
 
 ```bash
-bun run build
+DATABASE_URL=postgresql://postgres:password@localhost:5432/octogen
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= / CLERK_SECRET_KEY=
+GITHUB_TOKEN=
+GOOGLE_GENERATIVE_AI_API_KEY= / GROQ_API_KEY=
+ASSEMBLY_AI_API_KEY= / NEXT_PUBLIC_ASSEMBLY_AI_API_KEY=
+STRIPE_SECRET_KEY= / STRIPE_PUBLISHABLE_KEY= / STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-To skip environment validation during Docker builds:
-```bash
-SKIP_ENV_VALIDATION=1 bun run build
-```
+Starts a Postgres container named `octogen-postgres`. Needs the `pgvector` extension.
 
-### Start production server
+Point at `http://localhost:3000`, create a project from a small public repo first to save credits.
 
-```bash
-bun run start
-```
-
-### Preview (build + start)
-
-```bash
-bun run preview
-```
-
-### Hosting
-
-The project includes Vercel detection in the tRPC client (`process.env.VERCEL_URL`), indicating it is designed for deployment on **Vercel**. The Stripe webhook endpoint is configured as a public route in the Clerk middleware for external access.
-
-**Required for deployment:**
-- PostgreSQL database with pgvector extension (e.g., Supabase, Neon, or self-hosted)
-- All environment variables configured in the hosting platform
-- Stripe webhook endpoint registered: `{APP_URL}/api/webhook/stripe`
-
-### Database inspection
+### Run checks
 
 ```bash
-bun run db:studio
+bun run check    # lint + typecheck
+bun run build    # production build
+bun run db:studio # inspect Postgres
 ```
 
-This opens Prisma Studio, a GUI for browsing and editing database records.
+### Submit a pull request
 
----
-
-## Contributing
-
-1. **Fork** the repository
-2. **Create a feature branch:** `git checkout -b feature/your-feature-name`
-3. **Make your changes** and ensure they pass linting and type checking:
-   ```bash
-   bun run check
-   ```
-4. **Commit** with a descriptive message following the existing convention:
-   ```
-   feat: description of feature
-   bug: description of fix
-   ```
-5. **Push** to your fork and open a **Pull Request**
-
-### Development scripts
-
-| Script | Description |
-|---|---|
-| `bun run dev` | Start dev server with Turbopack |
-| `bun run build` | Production build |
-| `bun run check` | Run lint + typecheck |
-| `bun run lint:fix` | Auto-fix lint errors |
-| `bun run format:write` | Auto-format all files |
-| `bun run db:generate` | Create a new Prisma migration |
-| `bun run db:push` | Push schema changes to database |
-| `bun run db:studio` | Open Prisma Studio GUI |
-
----
-
-## License
-
-No license file was found in the repository. This means the project is under **default copyright** — all rights are reserved by the author. If you intend to use, modify, or distribute this code, please contact the repository owner for permission.
+Fork the repo and open a PR to `main`. Keep it scoped — one feature / fix per PR.
