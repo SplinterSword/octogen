@@ -29,7 +29,7 @@ Repo knowledge is lost on every fresh clone — `grep` finds text, not meaning, 
 - Faster onboarding: clone logic — ask `how does billing work?` instead of reading 50 files.
 - Stay in flow: streamed answers with file references instead of tab-hopping.
 
-## 🚀 Quick Start
+## Quick Start
 
 First visit this link: [https://octogen-rouge.vercel.app/](https://octogen-rouge.vercel.app/)
 
@@ -57,7 +57,7 @@ Open the live link above → Sign up / Sign in via Clerk → you'll land on `/da
 - `/join/[projectId]` — share the invite link so teammates get the same project
 - `/billing` — check balance, move the slider to buy more (`$2 per 100 credits`)
 
-See `## Usage` below for the daily loop. Want to run it locally instead? See `## 🤝 Contributing`.
+See `## Usage` below for the daily loop. Want to run it locally instead? See `## Contributing`.
 
 ## Usage
 
@@ -124,7 +124,7 @@ Technical_Documentation.md → architecture, RAG flow, decisions, challenges, li
 
 Skipping the deep dive here on purpose. For architecture diagrams, RAG pipeline, tiered models, pgvector setup, challenges, and deployment — checkout `Technical_Documentation.md`.
 
-## 🤝 Contributing
+## Contributing
 
 ### Clone the repo
 
