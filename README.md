@@ -2,7 +2,7 @@
 
 Ask your repo anything — AI answers grounded in your actual code, not guesses.
 
-![Octogen demo](docs/demo.gif)
+https://github.com/user-attachments/assets/4679dbe0-1d56-4f0b-b70d-6d67997937e7
 <!-- Replace docs/demo.gif with real recording: create project, ask a question, upload a meeting -->
 
 ## What is this?
